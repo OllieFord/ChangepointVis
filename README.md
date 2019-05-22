@@ -22,7 +22,7 @@ A range of recent work that focuses on interactive visualization of AI systems [
 
 ## Project Goals
 
--[ ] Visualizing relevant information on time series, such as means, trends, etc. for a variety of number of changepoints defined via a penalty threshold.
+- [ ] Visualizing relevant information on time series, such as means, trends, etc. for a variety of number of changepoints defined via a penalty threshold.
 - [ ] Allow for manual labeling of a time series so that researchers can label time points based on the patterns they see in the data, or prior knowledge. 
 - [ ] Use labelling (and max-min labelling) to learn “optimal” penalty levels and provide consistent changepoint/model specification.
 - [ ] Extend 1 to work with multiple time series.
