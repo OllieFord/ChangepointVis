@@ -1,0 +1,15 @@
+Package: CpVis
+Title: Interactive Visualization for Change Point Exploration and Labeling
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Oliver",
+           family = "Ford",
+           role = c("aut", "cre"),
+           email = "first.last@example.com",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: What the package does (one paragraph).
+License: GPL
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    testthat (>= 2.1.0)
