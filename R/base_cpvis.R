@@ -1,8 +1,9 @@
-library(shiny)
-library(changepoint)
-library(shinyWidgets)
 
-#' Visualise and interact with change point solution range
+#' Visual Interface for Changepoint Penalty Exploration
+#'
+#' This function takes a univariate dataset as input, as well as a range of penalty values.
+#' It uses cpt.mean with the "PELT" method and "CROPS" penalty type from the changepoint package.
+#'
 #'
 #' @param data A univariate dataset
 #' @param penalty_range A range of penalty values
@@ -11,12 +12,12 @@ library(shinyWidgets)
 #' @export
 #'
 #' @examples
+#' data = c(rnorm(100,0,1),rnorm(100,5,1))
 #' cpVis(data, penalty_range = c(1e-5,10))
 cpVis <- function(data, penalty_range = c(1e-5,10)){
 
   require(shiny)
   require(changepoint)
-  require(shinyWidgets)
 
     shinyApp(
         ui <- fluidPage(
