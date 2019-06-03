@@ -1,0 +1,17 @@
+
+
+#main_output {
+  height: 400px;
+  width: 70vw;
+  margin: 30px;
+}
+
+.axis {
+	font: 10px sans-serif;
+}
+
+#solution_path {
+  height: 400px;
+  width: 70vw;
+  margin: 30px;
+}
