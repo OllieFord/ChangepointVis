@@ -60,9 +60,11 @@ library(htmlwidgets)
           solution_path_df <- data.frame(number_changepoints, penalty_values)
           colnames(solution_path_df) <- c("changepoints", "penalty_values")
 
+
+
           # convert the data to json
           json <- jsonlite::toJSON(c(data_set = list(data.crops@data.set), cpts_full = clean_full_cpts, solution_path = list(solution_path_df)), pretty = TRUE)
-
+          print(json)
           #output/send to client
           output$main_data <- renderD3({
                 r2d3(data=json, script = "JS/univariate_visualisation.js", d3_version = 4, container = "div")

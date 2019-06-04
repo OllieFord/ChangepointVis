@@ -8,6 +8,12 @@ var data = r2d3.data;
 
 var data_set = data.data_set;
 
+var changepoint_lengths = [];
+for (i = 0; i < data.cpts_full.length; i++) {
+  changepoint_lengths.push(data.cpts_full[i].length)
+}
+
+
 var parentDiv = document.getElementById("main_output");
 var width = parentDiv.clientWidth;
 var height = parentDiv.clientHeight;
@@ -107,6 +113,11 @@ main_plot.append("text")
       .text("Value");
 
 
+// ------------------------------------- Piecewise Constant --------------------------------------------
+/*
+the Piecewise Constant calculation needs to split the base dataset into n segments, split at the changepoint locations,
+the mean is then calculated for every segment which gives us the coresponing y coordinates for the line. So we use the changepoint indexes as the x coordinate and the changepoint segment mean as the y coordinates.
+*/
 
 // ------------------------------------- Solution Path --------------------------------------------
 
@@ -123,11 +134,16 @@ solution_plot.selectAll("circle")
 			   .attr("r", 4)
 			   .attr("fill", "#c5c5c5")
 			   .on("mouseover", function(d){
-
 			     solution_plot.selectAll("#tooltip").remove();
 			     solution_plot.selectAll("#horizontal_line").remove();
 			     solution_plot.selectAll("#selection_circle").remove();
 			     solution_plot.selectAll("#focus_circle").remove();
+			     main_plot.selectAll("#change_point").remove();
+
+			     var changepoint_selection = d.changepoints;
+			     var change_locations = data.cpts_full[changepoint_lengths.indexOf(changepoint_selection)];
+
+
 
 			     var xPosition = parseFloat(d3.select(this).attr("cx"))+ 70;
 			     //var xPosition = spXScale(sp_cp_max) + 40;
@@ -178,7 +194,6 @@ solution_plot.selectAll("circle")
       			      .attr("stroke", "#ff6f61")
       			      .attr("stroke-width", "3")
 
-
       			 solution_plot.append("circle")
       			            .attr("id", "selection_circle")
 			                  .attr("cx", lxPosition)
@@ -194,6 +209,30 @@ solution_plot.selectAll("circle")
       			            .attr("cy", lyPosition)
       			            .attr("r", 4)
       			            .attr("fill", "#ff6f61");
+            /*
+      			 main_plot.append("circle")
+      			            .attr("id", "focus_circle")
+			                  .attr("cx", lxPosition)
+      			            .attr("cy", lyPosition)
+      			            .attr("r", 4)
+      			            .attr("fill", "#ff6f61");
+      			 */
+
+      			 main_plot.selectAll("circle")
+                    .data(change_locations)
+                    .enter()
+                    .append("circle")
+                    .attr("id", "change_point")
+                    // x cooridinates => index of changepoint based on changepoints
+                    .attr("cx", function(d) {
+          			   		return mainXScale(d - 1); // r indexes start from 1
+          			      })
+          			     // y cooridinate => value of the data coresponding to the main dataset (value at index)
+          			   .attr("cy", function(d) {
+          			   		return mainYScale(data_set[d - 1]); // r indexes start from 1
+          			      })
+          			   .attr("r", 4)
+      			       .attr("fill", "#ff6f61");
 
 			   })
 
