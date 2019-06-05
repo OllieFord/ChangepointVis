@@ -79,9 +79,14 @@ var line = d3.line()
             .x(function(d, i) { return mainXScale(i); })
             .y(function(d) { return mainYScale(d); });
 
+var Piecewise_constant = d3.line()
+            .x(function(d) { return mainXScale(d.x); })
+            .y(function(d) { return mainYScale(d.y); })
+            .curve(d3.curveStepAfter);
+
 main_plot.append("path")
           .datum(data.data_set)
-          .attr("class", "line")
+          .attr("class", "main-line")
           .attr("fill", "none")
           .attr("stroke", "#c5c5c5")
           .attr("d", line);
@@ -90,7 +95,7 @@ main_plot.append("g")
     .attr("class", "axis axis--x")
     .attr("transform", "translate(0," + height + ")")
     .call(mxAxis);
-
+-
 // text label for the x axis
 main_plot.append("text")
       .attr("transform", "translate(" + (width/2) + " ," + (height + margin.top + 5) + ")")
@@ -139,14 +144,44 @@ solution_plot.selectAll("circle")
 			     solution_plot.selectAll("#selection_circle").remove();
 			     solution_plot.selectAll("#focus_circle").remove();
 			     main_plot.selectAll("#change_point").remove();
+			     main_plot.selectAll(".pc-line").remove();
 
 			     var changepoint_selection = d.changepoints;
-			     var change_locations = data.cpts_full[changepoint_lengths.indexOf(changepoint_selection)];
+			     var change_locations = data.cpts_full[changepoint_lengths.indexOf(changepoint_selection)].map( function(value) {
+                return value - 1;
+              } );
 
+          if (change_locations[0] !== 0) {
+            change_locations.unshift(0);
+          }
 
+          change_locations.push(data_set.length-1);
+
+          // split the data into segemnts
+			    var segments = [];
+			    for (i = 0; i < change_locations.length; i++) {
+                let chunk = data_set.slice(change_locations[i], change_locations[i + 1])
+                segments.push(chunk)
+              }
+
+          // calcualte the mean for each segment of the data
+          var means = [];
+          for (i = 0; i < segments.length; i++) {
+            var sum = 0;
+            for (var k = 0; k < segments[i].length; k++){
+              sum += parseInt(segments[i][k], 10);
+            }
+            var avg = sum/segments[i].length;
+            means.push(avg)
+          }
+
+          // create Piecewise_constant line data
+          var pw_c = [];
+          for  (var i = 0; i < means.length; i++) {
+            pw_c.push({x: change_locations[i], y: means[i]});
+          }
 
 			     var xPosition = parseFloat(d3.select(this).attr("cx"))+ 70;
-			     //var xPosition = spXScale(sp_cp_max) + 40;
 			     var yPosition = parseFloat(d3.select(this).attr("cy")) -10;
 
 			     var lxPosition = parseFloat(d3.select(this).attr("cx"));
@@ -209,15 +244,7 @@ solution_plot.selectAll("circle")
       			            .attr("cy", lyPosition)
       			            .attr("r", 4)
       			            .attr("fill", "#ff6f61");
-            /*
-      			 main_plot.append("circle")
-      			            .attr("id", "focus_circle")
-			                  .attr("cx", lxPosition)
-      			            .attr("cy", lyPosition)
-      			            .attr("r", 4)
-      			            .attr("fill", "#ff6f61");
-      			 */
-
+/*
       			 main_plot.selectAll("circle")
                     .data(change_locations)
                     .enter()
@@ -225,14 +252,22 @@ solution_plot.selectAll("circle")
                     .attr("id", "change_point")
                     // x cooridinates => index of changepoint based on changepoints
                     .attr("cx", function(d) {
-          			   		return mainXScale(d - 1); // r indexes start from 1
+          			   		return mainXScale(d); // r indexes start from 1
           			      })
           			     // y cooridinate => value of the data coresponding to the main dataset (value at index)
           			   .attr("cy", function(d) {
-          			   		return mainYScale(data_set[d - 1]); // r indexes start from 1
+          			   		return mainYScale(data_set[d]);
           			      })
           			   .attr("r", 4)
-      			       .attr("fill", "#ff6f61");
+      			       .attr("fill", "#ff6f61")
+*/
+
+      			   main_plot.append("path")
+      			          .attr("class", "pc-line")
+      			          .attr("d", Piecewise_constant(pw_c))
+      			          .style("fill", "none")
+      			          .style("stroke", "#ff6f61")
+      			          .style("stroke-width", 2);
 
 			   })
 
