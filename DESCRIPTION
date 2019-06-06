@@ -16,4 +16,7 @@ Suggests:
 RoxygenNote: 6.1.1
 Imports: 
     shiny,
-    changepoint
+    changepoint,
+    r2d3,
+    jsonlite,
+    htmlwidgets

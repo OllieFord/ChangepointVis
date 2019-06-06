@@ -1,9 +1,9 @@
 
-#' Visual Interface for Changepoint Penalty Exploration
+#' Visual Interface for Changepoint Penalty Exploration (D3 version)
 #'
 #' This function takes a univariate dataset as input, as well as a range of penalty values.
 #' It uses cpt.mean with the "PELT" method and "CROPS" penalty type from the changepoint package.
-#'
+#' @name cpVis_d3
 #'
 #' @param data A univariate dataset
 #' @param penalty_range A range of penalty values
@@ -13,18 +13,19 @@
 #'
 #' @examples
 #' data = c(rnorm(100,0,1),rnorm(100,5,1))
-#' cpVis(data, penalty_range = c(1e-5,10))
+#' cpVis_d3(data, penalty_range = c(1e-5,10))
 #'
 library(r2d3)
 library(jsonlite)
 library(htmlwidgets)
 
-
-  data = c(rnorm(100,0,1),rnorm(100,5,1))
+cpVis_d3 <- function(data, penalty_range = c(1e-5,10)){
 
   require(shiny)
   require(changepoint)
   require(r2d3)
+  require(jsonlite)
+  require(htmlwidgets)
 
     shinyApp(
         ui <- fluidPage(
@@ -67,10 +68,10 @@ library(htmlwidgets)
           print(json)
           #output/send to client
           output$main_data <- renderD3({
-                r2d3(data=json, script = "JS/univariate_visualisation.js", d3_version = 4, container = "div")
+                r2d3(data=json, script = system.file("JS/univariate_visualisation.js", package = "CpVis"), d3_version = 4, container = "div")
               })
 
         }
     )
 
-    shinyApp(ui = ui, server = server)
+}

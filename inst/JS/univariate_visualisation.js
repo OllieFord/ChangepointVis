@@ -6,12 +6,22 @@
 
 var data = r2d3.data;
 
-var data_set = data.data_set;
-
 var changepoint_lengths = [];
 for (i = 0; i < data.cpts_full.length; i++) {
   changepoint_lengths.push(data.cpts_full[i].length)
 }
+
+// compute count of all changepoints
+
+var counts = {};
+for (var i = 0; i < data.cpts_full.length; i++) {
+  for(var j=0; j< data.cpts_full[i].length; j++){
+    var num = data.cpts_full[i][j];
+    counts[num] = counts[num] ? counts[num] + 1 : 1;
+  }
+}
+
+var counts_values = d3.values(counts);
 
 
 var parentDiv = document.getElementById("main_output");
@@ -23,14 +33,16 @@ var xpadding = 80;
 var ypadding = 70;
 
 var mainXScale = d3.scaleLinear()
-    .domain([d3.min(data_set), data_set.length-1]) // input
+    .domain([d3.min(data.data_set), data.data_set.length-1]) // input
     .range([xpadding, width - xpadding]);
 
 var mainYScale = d3.scaleLinear()
-							.domain([d3.min(data_set), d3.max(data_set)])
+							.domain([d3.min(data.data_set), d3.max(data.data_set)])
 							.range([height - ypadding, ypadding]);
 
-
+var histYScale = d3.scaleLinear()
+							.domain([d3.min(counts_values), data.cpts_full.length ])
+							.range([height,  height - ypadding]);
 
 var sp_cp_min = d3.min(data.solution_path, function(d) { return +d.changepoints;});
 var sp_cp_max = d3.max(data.solution_path, function(d) { return +d.changepoints;});
@@ -79,11 +91,6 @@ var line = d3.line()
             .x(function(d, i) { return mainXScale(i); })
             .y(function(d) { return mainYScale(d); });
 
-var Piecewise_constant = d3.line()
-            .x(function(d) { return mainXScale(d.x); })
-            .y(function(d) { return mainYScale(d.y); })
-            .curve(d3.curveStepAfter);
-
 main_plot.append("path")
           .datum(data.data_set)
           .attr("class", "main-line")
@@ -95,13 +102,12 @@ main_plot.append("g")
     .attr("class", "axis axis--x")
     .attr("transform", "translate(0," + height + ")")
     .call(mxAxis);
--
+
 // text label for the x axis
 main_plot.append("text")
       .attr("transform", "translate(" + (width/2) + " ," + (height + margin.top + 5) + ")")
       .style("text-anchor", "middle")
       .text("Time");
-
 
 main_plot.append("g")
     .attr("class", "y axis")
@@ -118,13 +124,27 @@ main_plot.append("text")
       .text("Value");
 
 
-// ------------------------------------- Piecewise Constant --------------------------------------------
-/*
-the Piecewise Constant calculation needs to split the base dataset into n segments, split at the changepoint locations,
-the mean is then calculated for every segment which gives us the coresponing y coordinates for the line. So we use the changepoint indexes as the x coordinate and the changepoint segment mean as the y coordinates.
-*/
+// ------------------------------------- Histogram  ---------------------------------------------------
+
+//console.log(d3.values(counts));
+main_plot.selectAll(".bar")
+      .data(d3.values(counts))
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d, i) { return mainXScale(i); })
+      .attr("width", 2)
+      .attr("y", function(d) { return histYScale(d);})
+      .attr("height", function(d) { return height - histYScale(d);})
+      .style("opacity", 0.6)
+      .style("fill", "#ff6f61");
 
 // ------------------------------------- Solution Path --------------------------------------------
+
+
+var Piecewise_constant = d3.line()
+            .x(function(d) { return mainXScale(d.x); })
+            .y(function(d) { return mainYScale(d.y); })
+            .curve(d3.curveStepAfter);
 
 solution_plot.selectAll("circle")
 			   .data(data.solution_path)
@@ -140,28 +160,27 @@ solution_plot.selectAll("circle")
 			   .attr("fill", "#c5c5c5")
 			   .on("mouseover", function(d){
 			     solution_plot.selectAll("#tooltip").remove();
-			     solution_plot.selectAll("#horizontal_line").remove();
+			     solution_plot.selectAll("#selection_line").remove();
 			     solution_plot.selectAll("#selection_circle").remove();
 			     solution_plot.selectAll("#focus_circle").remove();
 			     main_plot.selectAll("#change_point").remove();
 			     main_plot.selectAll(".pc-line").remove();
 
-			     var changepoint_selection = d.changepoints;
-			     var change_locations = data.cpts_full[changepoint_lengths.indexOf(changepoint_selection)].map( function(value) {
+
+			     var change_locations = data.cpts_full[changepoint_lengths.indexOf(d.changepoints)].map( function(value) {
                 return value - 1;
               } );
 
           if (change_locations[0] !== 0) {
             change_locations.unshift(0);
           }
-
-          change_locations.push(data_set.length-1);
+          change_locations.push(data.data_set.length-1);
 
           // split the data into segemnts
 			    var segments = [];
 			    for (i = 0; i < change_locations.length; i++) {
-                let chunk = data_set.slice(change_locations[i], change_locations[i + 1])
-                segments.push(chunk)
+                let chunk = data.data_set.slice(change_locations[i], change_locations[i + 1]);
+                segments.push(chunk);
               }
 
           // calcualte the mean for each segment of the data
@@ -172,7 +191,7 @@ solution_plot.selectAll("circle")
               sum += parseInt(segments[i][k], 10);
             }
             var avg = sum/segments[i].length;
-            means.push(avg)
+            means.push(avg);
           }
 
           // create Piecewise_constant line data
@@ -183,10 +202,11 @@ solution_plot.selectAll("circle")
 
 			     var xPosition = parseFloat(d3.select(this).attr("cx"))+ 70;
 			     var yPosition = parseFloat(d3.select(this).attr("cy")) -10;
-
 			     var lxPosition = parseFloat(d3.select(this).attr("cx"));
 			     var lyPosition = parseFloat(d3.select(this).attr("cy"));
 
+
+          // tooltip penalty value text
 			     solution_plot.append("text")
       			     .attr("id", "tooltip")
       			     .attr("x", xPosition)
@@ -199,6 +219,7 @@ solution_plot.selectAll("circle")
       			     .text("Pv: " + d.penalty_values)
       			     .style("opacity", 0.6)
 
+            // tooltip changepoint value text
       			solution_plot.append("text")
       			     .attr("id", "tooltip")
       			     .attr("x", lxPosition)
@@ -211,8 +232,9 @@ solution_plot.selectAll("circle")
       			     .text(d.changepoints)
       			     .style("opacity", 0.6)
 
+            // selection horizontal line
 			     solution_plot.append("line")
-			            .attr("id", "horizontal_line")
+			            .attr("id", "selection_line")
       			      .attr("x1", lxPosition - 15)
       			      .attr("y1", lyPosition)
       			      .attr("x2", 0 + ypadding)
@@ -220,8 +242,9 @@ solution_plot.selectAll("circle")
       			      .attr("stroke", "#ff6f61")
       			      .attr("stroke-width", "3")
 
+            // selection vertical line
       			solution_plot.append("line")
-			            .attr("id", "horizontal_line")
+			            .attr("id", "selection_line")
       			      .attr("x1", lxPosition)
       			      .attr("y1", lyPosition + 15)
       			      .attr("x2", lxPosition)
@@ -244,23 +267,6 @@ solution_plot.selectAll("circle")
       			            .attr("cy", lyPosition)
       			            .attr("r", 4)
       			            .attr("fill", "#ff6f61");
-/*
-      			 main_plot.selectAll("circle")
-                    .data(change_locations)
-                    .enter()
-                    .append("circle")
-                    .attr("id", "change_point")
-                    // x cooridinates => index of changepoint based on changepoints
-                    .attr("cx", function(d) {
-          			   		return mainXScale(d); // r indexes start from 1
-          			      })
-          			     // y cooridinate => value of the data coresponding to the main dataset (value at index)
-          			   .attr("cy", function(d) {
-          			   		return mainYScale(data_set[d]);
-          			      })
-          			   .attr("r", 4)
-      			       .attr("fill", "#ff6f61")
-*/
 
       			   main_plot.append("path")
       			          .attr("class", "pc-line")
@@ -268,22 +274,18 @@ solution_plot.selectAll("circle")
       			          .style("fill", "none")
       			          .style("stroke", "#ff6f61")
       			          .style("stroke-width", 2);
-
-			   })
-
-
-
+			   });
 
 solution_plot.append("g")
     .attr("class", "axis axis--x")
     .attr("transform", "translate(0," + height + ")")
     .call(spxAxis);
+
 // text label for the x axis
 solution_plot.append("text")
       .attr("transform", "translate(" + (width/2) + " ," + (height + margin.top + 10) + ")")
       .style("text-anchor", "middle")
       .text("Number of Changepoints");
-
 
 
 solution_plot.append("g")
