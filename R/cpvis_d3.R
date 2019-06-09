@@ -18,6 +18,7 @@
 library(r2d3)
 library(jsonlite)
 library(htmlwidgets)
+library(shiny)
 
 cpVis_d3 <- function(data, penalty_range = c(1e-5,10)){
 
@@ -44,7 +45,7 @@ cpVis_d3 <- function(data, penalty_range = c(1e-5,10)){
         server <- function(input, output, session) {
 
           # run the change point method on the data - for differnet penalty values
-          data.crops = cpt.mean(data, method="PELT", penalty="CROPS", pen.value=c(1e-5,10))
+          data.crops = cpt.mean(data, method="PELT", penalty="CROPS", pen.value=penalty_range)
 
           full_cpts <- split(data.crops@cpts.full, 1:nrow(data.crops@cpts.full))
 

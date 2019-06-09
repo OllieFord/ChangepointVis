@@ -3,26 +3,57 @@
 // r2d3: https://rstudio.github.io/r2d3
 //
 
-
 var data = r2d3.data;
+
+const accent_colour = "#4363d8"; //blue
+const base_colour = "#c5c5c5"; //Grey
+const secondary_colour = "#f58231"; //orange
+
+
+// ---------------- Convert data  ---------------------
+// data manipulation on startup -(these are quality of life changes)
 
 var changepoint_lengths = [];
 for (i = 0; i < data.cpts_full.length; i++) {
-  changepoint_lengths.push(data.cpts_full[i].length)
+  changepoint_lengths.push(data.cpts_full[i].length);
+}
+
+//console.log(changepoint_lengths);
+
+// new cpts_full data  (to, changed to index at zero)
+all_changepoints = [];
+for (i = 0; i < data.cpts_full.length; i++) {
+  var change_locations = [];
+  for (j = 0; j < data.cpts_full[i].length; j++) {
+    change_locations.push(data.cpts_full[i][j] - 1);
+  }
+  if (change_locations[0] !== 0) {
+    change_locations.unshift(0);
+  }
+  change_locations.push(data.data_set.length-1);
+  all_changepoints.push(change_locations);
 }
 
 // compute count of all changepoints
-
 var counts = {};
-for (var i = 0; i < data.cpts_full.length; i++) {
-  for(var j=0; j< data.cpts_full[i].length; j++){
-    var num = data.cpts_full[i][j];
+for (var i = 0; i < all_changepoints.length; i++) {
+  for(var j=0; j< all_changepoints[i].length; j++){
+    var num = all_changepoints[i][j];
     counts[num] = counts[num] ? counts[num] + 1 : 1;
   }
 }
 
+var counts_keys = d3.keys(counts);
 var counts_values = d3.values(counts);
+//var scaled_counts = counts_values.map(function(x) x * d3.max(counts_values));
 
+var hist_data = [];
+for (i = 0; i < counts_values.length; i++) {
+  var tmp = {loc:counts_keys[i], count:counts_values[i] };
+  hist_data.push(tmp);
+}
+
+// ---------------- Plot Layout Parameters ---------------------
 
 var parentDiv = document.getElementById("main_output");
 var width = parentDiv.clientWidth;
@@ -32,6 +63,7 @@ var margin = {top: 50, right: 0, bottom: 50, left: 50};
 var xpadding = 80;
 var ypadding = 70;
 
+// ---------------- Setup scales ---------------------
 var mainXScale = d3.scaleLinear()
     .domain([d3.min(data.data_set), data.data_set.length-1]) // input
     .range([xpadding, width - xpadding]);
@@ -41,7 +73,7 @@ var mainYScale = d3.scaleLinear()
 							.range([height - ypadding, ypadding]);
 
 var histYScale = d3.scaleLinear()
-							.domain([d3.min(counts_values), data.cpts_full.length ])
+							.domain([d3.min(counts_values), d3.max(counts_values)])
 							.range([height,  height - ypadding]);
 
 var sp_cp_min = d3.min(data.solution_path, function(d) { return +d.changepoints;});
@@ -69,6 +101,8 @@ var spxAxis = d3.axisBottom()
 
 var spyAxis = d3.axisLeft()
 							  .scale(spYScale)
+
+// ---------------- Setup plot elements ---------------------
 
 // Create seperate svgs for each plot
 // Main plot
@@ -107,6 +141,7 @@ main_plot.append("g")
 main_plot.append("text")
       .attr("transform", "translate(" + (width/2) + " ," + (height + margin.top + 5) + ")")
       .style("text-anchor", "middle")
+      .attr("font-size", "2rem")
       .text("Time");
 
 main_plot.append("g")
@@ -121,22 +156,22 @@ main_plot.append("text")
       .attr("x",0 - (height / 2))
       .attr("dy", "1em")
       .style("text-anchor", "middle")
+      .attr("font-size", "2rem")
       .text("Value");
 
 
-// ------------------------------------- Histogram  ---------------------------------------------------
-
-//console.log(d3.values(counts));
+// ------------------------------------- "Histogram"  ---------------------------------------------------
 main_plot.selectAll(".bar")
-      .data(d3.values(counts))
+      .data(hist_data)
     .enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function(d, i) { return mainXScale(i); })
+      .attr("x", function(d) { return mainXScale(d.loc) })
       .attr("width", 2)
-      .attr("y", function(d) { return histYScale(d);})
-      .attr("height", function(d) { return height - histYScale(d);})
+      .attr("y", function(d) { return histYScale(d.count);})
+      .attr("height", function(d) { return height - histYScale(d.count);})
       .style("opacity", 0.6)
-      .style("fill", "#ff6f61");
+      .style("fill", secondary_colour);
+
 
 // ------------------------------------- Solution Path --------------------------------------------
 
@@ -145,7 +180,7 @@ var Piecewise_constant = d3.line()
             .x(function(d) { return mainXScale(d.x); })
             .y(function(d) { return mainYScale(d.y); })
             .curve(d3.curveStepAfter);
-
+//console.log(all_changepoints);
 solution_plot.selectAll("circle")
 			   .data(data.solution_path)
 			   .enter()
@@ -157,48 +192,53 @@ solution_plot.selectAll("circle")
 			   		return spYScale(d.penalty_values);
 			   })
 			   .attr("r", 4)
-			   .attr("fill", "#c5c5c5")
+			   .attr("fill", base_colour)
 			   .on("mouseover", function(d){
 			     solution_plot.selectAll("#tooltip").remove();
 			     solution_plot.selectAll("#selection_line").remove();
 			     solution_plot.selectAll("#selection_circle").remove();
 			     solution_plot.selectAll("#focus_circle").remove();
 			     main_plot.selectAll("#change_point").remove();
-			     main_plot.selectAll(".pc-line").remove();
+			     main_plot.selectAll(".pc-means").remove();
 
+			     var filtered_change_location = all_changepoints[changepoint_lengths.indexOf(d.changepoints)];
 
-			     var change_locations = data.cpts_full[changepoint_lengths.indexOf(d.changepoints)].map( function(value) {
-                return value - 1;
-              } );
-
-          if (change_locations[0] !== 0) {
-            change_locations.unshift(0);
-          }
-          change_locations.push(data.data_set.length-1);
 
           // split the data into segemnts
 			    var segments = [];
-			    for (i = 0; i < change_locations.length; i++) {
-                let chunk = data.data_set.slice(change_locations[i], change_locations[i + 1]);
+			    for (i = 0; i < filtered_change_location.length-1; i++) {
+			      if (i > 0) {
+			        var chunk = data.data_set.slice(filtered_change_location[i]+1, filtered_change_location[i+1]+1);
+			      } else {
+			        var chunk = data.data_set.slice(filtered_change_location[i], filtered_change_location[i+1]+1);
+			      }
                 segments.push(chunk);
               }
+
+          //console.log(JSON.stringify(data.data_set));
+
+          //console.log(JSON.stringify(segments));
 
           // calcualte the mean for each segment of the data
           var means = [];
           for (i = 0; i < segments.length; i++) {
             var sum = 0;
             for (var k = 0; k < segments[i].length; k++){
-              sum += parseInt(segments[i][k], 10);
+              sum += parseFloat(segments[i][k]);
             }
             var avg = sum/segments[i].length;
             means.push(avg);
           }
 
+          //console.log(JSON.stringify(means));
+
           // create Piecewise_constant line data
+          /*
           var pw_c = [];
           for  (var i = 0; i < means.length; i++) {
-            pw_c.push({x: change_locations[i], y: means[i]});
+            pw_c.push({x: filtered_change_location[i], y: means[i]});
           }
+          */
 
 			     var xPosition = parseFloat(d3.select(this).attr("cx"))+ 70;
 			     var yPosition = parseFloat(d3.select(this).attr("cy")) -10;
@@ -239,8 +279,8 @@ solution_plot.selectAll("circle")
       			      .attr("y1", lyPosition)
       			      .attr("x2", 0 + ypadding)
       			      .attr("y2", lyPosition)
-      			      .attr("stroke", "#ff6f61")
-      			      .attr("stroke-width", "3")
+      			      .attr("stroke", accent_colour)
+      			      .attr("stroke-width", "2")
 
             // selection vertical line
       			solution_plot.append("line")
@@ -249,16 +289,16 @@ solution_plot.selectAll("circle")
       			      .attr("y1", lyPosition + 15)
       			      .attr("x2", lxPosition)
       			      .attr("y2", height)
-      			      .attr("stroke", "#ff6f61")
-      			      .attr("stroke-width", "3")
+      			      .attr("stroke", accent_colour)
+      			      .attr("stroke-width", "2")
 
       			 solution_plot.append("circle")
       			            .attr("id", "selection_circle")
 			                  .attr("cx", lxPosition)
       			            .attr("cy", lyPosition)
       			            .attr("r", 15)
-      			            .attr("stroke", "#ff6f61")
-      			            .attr("stroke-width", "3")
+      			            .attr("stroke", accent_colour)
+      			            .attr("stroke-width", "2")
       			            .attr("fill", "none");
 
       			 solution_plot.append("circle")
@@ -266,31 +306,42 @@ solution_plot.selectAll("circle")
 			                  .attr("cx", lxPosition)
       			            .attr("cy", lyPosition)
       			            .attr("r", 4)
-      			            .attr("fill", "#ff6f61");
-
-      			   main_plot.append("path")
-      			          .attr("class", "pc-line")
-      			          .attr("d", Piecewise_constant(pw_c))
+      			            .attr("fill", accent_colour);
+              // piecewise constant lines
+      			 for (i = 0; i< means.length; i++){
+      			   main_plot.append("line")
+      			          .attr("class", "pc-means")
+      			          .transition()
+      			          .duration(300)
+      			          .attr("x1", mainXScale(filtered_change_location[i]))
+      			          .attr("y1", mainYScale(means[i]))
+      			          .attr("x2", mainXScale(filtered_change_location[i+1]))
+      			          .attr("y2", mainYScale(means[i]))
       			          .style("fill", "none")
-      			          .style("stroke", "#ff6f61")
-      			          .style("stroke-width", 2);
+      			          .style("stroke", accent_colour)
+      			          .style("stroke-width", 3);
+
+      			 }
 			   });
 
 solution_plot.append("g")
     .attr("class", "axis axis--x")
     .attr("transform", "translate(0," + height + ")")
+    .attr("font-size", "2rem")
     .call(spxAxis);
 
 // text label for the x axis
 solution_plot.append("text")
       .attr("transform", "translate(" + (width/2) + " ," + (height + margin.top + 10) + ")")
       .style("text-anchor", "middle")
+      .attr("font-size", "2rem")
       .text("Number of Changepoints");
 
 
 solution_plot.append("g")
     .attr("class", "y axis")
     .attr("transform", "translate(" + ypadding + ", 0)")
+    .attr("font-size", "2rem")
     .call(spyAxis);
 
 // text label for the y axis
@@ -300,5 +351,6 @@ solution_plot.append("text")
       .attr("x",0 - (height / 2))
       .attr("dy", "1em")
       .style("text-anchor", "middle")
+      .attr("font-size", "2rem")
       .text("Penalty Value");
 
