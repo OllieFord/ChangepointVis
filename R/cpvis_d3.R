@@ -19,6 +19,7 @@ library(r2d3)
 library(jsonlite)
 library(htmlwidgets)
 library(shiny)
+library(shinyjs)
 
 cpVis_d3 <- function(data, penalty_range = c(1e-5,10)){
 
@@ -27,25 +28,37 @@ cpVis_d3 <- function(data, penalty_range = c(1e-5,10)){
   require(r2d3)
   require(jsonlite)
   require(htmlwidgets)
+  require(shinyjs)
 
     shinyApp(
         ui <- fluidPage(
+          inlineCSS(".axis {font: 10px sans-serif;}
+                    h2 {text-align: center;}
+                    #solution_path {height: 400px; width: 70vw; margin: 30px;}"),
 
           tags$head(
-          tags$link(rel = "stylesheet", type = "text/css", href = "main.css")
+          #tags$link(rel = "stylesheet", type = "text/css", href = "main.css")
         ),
 
             titlePanel("Change Point Visualisation"),
-
-        tags$div(id = "main_output", d3Output("main_data")),
-        tags$div(id = "data_overview")
-
+               tags$div(class = "row justify-content-md-left",
+                        tags$div(class = "col-lg-9",
+                                 tags$div(id = "main_output", d3Output("main_data"))
+                                 #tags$div(id = "data_overview")
+                                 ),
+                        tags$div(class = "col-lg-3",
+                                 tags$div(id = "data_overview")
+                                 )
+                        )
         ),
 
         server <- function(input, output, session) {
 
           # run the change point method on the data - for differnet penalty values
           data.crops = cpt.mean(data, method="PELT", penalty="CROPS", pen.value=penalty_range)
+
+          dataset_mean <- mean(data)
+          total_penalty_values <-
 
           full_cpts <- split(data.crops@cpts.full, 1:nrow(data.crops@cpts.full))
 
@@ -58,14 +71,21 @@ cpVis_d3 <- function(data, penalty_range = c(1e-5,10)){
           #list containing all penalty values
           penalty_values = list(data.crops@pen.value.full)
 
+
+          info <- list("Total Penalty Values" = lengths(penalty_values),
+                       "Data Points" = length(data),
+                       "Dataset Mean" = mean(data),
+                       "Dataset Variance" = var(data),
+                       "Max Data Value" = max(unlist(data)),
+                       "Min Data Value" =  min(unlist(data)))
+          info_df <- data.frame(stack(info))
+
           # dataframe containing changepoints and penalty values as columns
           solution_path_df <- data.frame(number_changepoints, penalty_values)
           colnames(solution_path_df) <- c("changepoints", "penalty_values")
 
-
-
           # convert the data to json
-          json <- jsonlite::toJSON(c(data_set = list(data.crops@data.set), cpts_full = clean_full_cpts, solution_path = list(solution_path_df)), pretty = TRUE)
+          json <- jsonlite::toJSON(c(data_set = list(data.crops@data.set), cpts_full = clean_full_cpts, solution_path = list(solution_path_df), d_info = list(info_df)), pretty = TRUE)
           print(json)
           #output/send to client
           output$main_data <- renderD3({

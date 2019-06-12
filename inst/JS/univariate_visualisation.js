@@ -53,24 +53,28 @@ for (i = 0; i < counts_values.length; i++) {
   hist_data.push(tmp);
 }
 
+
+var data_table = [];
+
 // ---------------- Plot Layout Parameters ---------------------
 
 var parentDiv = document.getElementById("main_output");
 var width = parentDiv.clientWidth;
 var height = parentDiv.clientHeight;
-var margin = {top: 50, right: 0, bottom: 50, left: 50};
+var margin = {top: 50, right: 50, bottom: 30, left: 0};
 
-var xpadding = 80;
-var ypadding = 70;
+
+var xpadding = 60;
+var ypadding = 90;
 
 // ---------------- Setup scales ---------------------
 var mainXScale = d3.scaleLinear()
     .domain([d3.min(data.data_set), data.data_set.length-1]) // input
-    .range([xpadding, width - xpadding]);
+    .range([xpadding+5, width - xpadding]);
 
 var mainYScale = d3.scaleLinear()
 							.domain([d3.min(data.data_set), d3.max(data.data_set)])
-							.range([height - ypadding, ypadding]);
+							.range([height - ypadding, 5]);
 
 var histYScale = d3.scaleLinear()
 							.domain([d3.min(counts_values), d3.max(counts_values)])
@@ -81,14 +85,14 @@ var sp_cp_max = d3.max(data.solution_path, function(d) { return +d.changepoints;
 
 var spXScale = d3.scaleLinear()
     .domain([sp_cp_min, sp_cp_max]) // input
-    .range([xpadding, width - xpadding]);
+    .range([xpadding+5, width - xpadding]);
 
 var sp_val_min = d3.min(data.solution_path, function(d) { return +d.penalty_values;});
 var sp_val_max = d3.max(data.solution_path, function(d) { return +d.penalty_values;});
 
 var spYScale = d3.scaleLinear()
 							.domain([sp_val_min, sp_val_max])
-							.range([height - ypadding, ypadding]);
+							.range([height - ypadding, 25]);
 
 var mxAxis = d3.axisBottom()
 							  .scale(mainXScale);
@@ -109,16 +113,40 @@ var spyAxis = d3.axisLeft()
 var main_plot = div
   .append("svg")
   .attr("class", "main_plot")
-  .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom)
+  .attr("viewBox", "0 0 "+  (width + margin.left + margin.right) +" " + (height + margin.top + margin.bottom))
+  //.attr("width", width + margin.left + margin.right)
+  //.attr("height", height + margin.top + margin.bottom)
 
 // Solution Path plot
 var solution_plot = div
   .append("svg")
   .attr("class", "solution_path")
-  .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom)
+  .attr("viewBox", "0 0 "+  (width + margin.left + margin.right) +" " + (height + margin.top + margin.bottom))
+  //.attr("width", width + margin.left + margin.right)
+  //.attr("height", height + margin.top + margin.bottom)
 
+
+var info = d3.select("#data_overview")
+// necesary for plot reszies (if removed plots duplicate)
+info.selectAll(".chart").remove();
+info.selectAll(".mean_histogram").remove();
+
+var info_plot = info
+        .append("div")
+        .attr("class", "chart")
+        .attr("width", (width / 4) + margin.left - margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .style("border-radius", "2px")
+        .style("box-shadow", "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)")
+
+var mean_hist = info
+        .append("svg")
+        .attr("class", "mean_histogram")
+        .attr("width", (width / 4) + margin.left - margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .style("background-color", base_colour)
+        .style("border-radius", "2px")
+        .style("box-shadow", "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)")
 // --------------------------------------- MAIN PLOT -------------------------------------------
 
 var line = d3.line()
@@ -133,7 +161,7 @@ main_plot.append("path")
           .attr("d", line);
 
 main_plot.append("g")
-    .attr("class", "axis axis--x")
+    .attr("class", "x axis")
     .attr("transform", "translate(0," + height + ")")
     .call(mxAxis);
 
@@ -146,7 +174,7 @@ main_plot.append("text")
 
 main_plot.append("g")
     .attr("class", "y axis")
-    .attr("transform", "translate(" + ypadding + ", 0)")
+    .attr("transform", "translate(" + xpadding + ", 0)")
     .call(myAxis);
 
 // text label for the y axis
@@ -173,14 +201,29 @@ main_plot.selectAll(".bar")
       .style("fill", secondary_colour);
 
 
+// ------------------------------------- info table --------------------------------------------
+
+var table = d3.select(".chart").append('table').attr("class", "table table-borderless");
+var thead = table.append('thead');
+var	tbody = table.append('tbody');
+
+thead.append('tr')
+	.selectAll('th')
+	.data(['Variable','Value']).enter()
+	.append('th')
+	.text(function (col_names) { return col_names; });
+
+var rows = tbody.selectAll('tr')
+  		.data(data.d_info)
+      .enter()
+      .append('tr')
+      	.attr("class",function(d) { return d.ind; });
+  // add first two columns
+rows.append('td').text(function(d) { return d.ind; });
+rows.append('td').text(function(d) { return d.values; });
+
 // ------------------------------------- Solution Path --------------------------------------------
 
-
-var Piecewise_constant = d3.line()
-            .x(function(d) { return mainXScale(d.x); })
-            .y(function(d) { return mainYScale(d.y); })
-            .curve(d3.curveStepAfter);
-//console.log(all_changepoints);
 solution_plot.selectAll("circle")
 			   .data(data.solution_path)
 			   .enter()
@@ -232,14 +275,6 @@ solution_plot.selectAll("circle")
 
           //console.log(JSON.stringify(means));
 
-          // create Piecewise_constant line data
-          /*
-          var pw_c = [];
-          for  (var i = 0; i < means.length; i++) {
-            pw_c.push({x: filtered_change_location[i], y: means[i]});
-          }
-          */
-
 			     var xPosition = parseFloat(d3.select(this).attr("cx"))+ 70;
 			     var yPosition = parseFloat(d3.select(this).attr("cy")) -10;
 			     var lxPosition = parseFloat(d3.select(this).attr("cx"));
@@ -263,7 +298,7 @@ solution_plot.selectAll("circle")
       			solution_plot.append("text")
       			     .attr("id", "tooltip")
       			     .attr("x", lxPosition)
-      			     .attr("y", height + 40)
+      			     .attr("y", height - margin.bottom)
       			     .attr("text-anchor", "middle")
       			     .attr("font-family", "sans-serif")
       			     .attr("font-weight", "bold")
@@ -277,7 +312,7 @@ solution_plot.selectAll("circle")
 			            .attr("id", "selection_line")
       			      .attr("x1", lxPosition - 15)
       			      .attr("y1", lyPosition)
-      			      .attr("x2", 0 + ypadding)
+      			      .attr("x2", 0 + xpadding)
       			      .attr("y2", lyPosition)
       			      .attr("stroke", accent_colour)
       			      .attr("stroke-width", "2")
@@ -288,7 +323,7 @@ solution_plot.selectAll("circle")
       			      .attr("x1", lxPosition)
       			      .attr("y1", lyPosition + 15)
       			      .attr("x2", lxPosition)
-      			      .attr("y2", height)
+      			      .attr("y2", height - ypadding + 17)
       			      .attr("stroke", accent_colour)
       			      .attr("stroke-width", "2")
 
@@ -325,14 +360,14 @@ solution_plot.selectAll("circle")
 			   });
 
 solution_plot.append("g")
-    .attr("class", "axis axis--x")
-    .attr("transform", "translate(0," + height + ")")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + (height - ypadding + 17) + ")")
     .attr("font-size", "2rem")
     .call(spxAxis);
 
 // text label for the x axis
 solution_plot.append("text")
-      .attr("transform", "translate(" + (width/2) + " ," + (height + margin.top + 10) + ")")
+      .attr("transform", "translate(" + (width/2) + " ," + (height) + ")")
       .style("text-anchor", "middle")
       .attr("font-size", "2rem")
       .text("Number of Changepoints");
@@ -340,7 +375,7 @@ solution_plot.append("text")
 
 solution_plot.append("g")
     .attr("class", "y axis")
-    .attr("transform", "translate(" + ypadding + ", 0)")
+    .attr("transform", "translate(" + xpadding + ", 0)")
     .attr("font-size", "2rem")
     .call(spyAxis);
 
