@@ -73,6 +73,9 @@ cpVis_d3 <- function(data, penalty_range = c(1e-5,10)){
 
 
           info <- list("Total Penalty Values" = lengths(penalty_values),
+                       "Penalty Range" = toString(penalty_range),
+                       "Max Penalty Value" = max(unlist(data.crops@pen.value.full)),
+                       "Min Penalty Value" = min(unlist(data.crops@pen.value.full)),
                        "Data Points" = length(data),
                        "Dataset Mean" = mean(data),
                        "Dataset Variance" = var(data),
