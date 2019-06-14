@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' data = c(rnorm(100,0,1),rnorm(100,5,1))
-#' cpVis_d3(data, penalty_range = c(1e-5,10))
+#' cpVisualise(data, penalty_range = c(1e-5,10))
 #'
 
 cpVisualise <- function(data, penalty_range = c(1e-5,10)){
@@ -55,9 +55,6 @@ cpVisualise <- function(data, penalty_range = c(1e-5,10)){
           # run the change point method on the data - for differnet penalty values
           data.crops = cpt.mean(data, method="PELT", penalty="CROPS", pen.value=penalty_range)
 
-          dataset_mean <- mean(data)
-          total_penalty_values <-
-
           full_cpts <- split(data.crops@cpts.full, 1:nrow(data.crops@cpts.full))
 
           #remove NA values and names
@@ -87,7 +84,7 @@ cpVisualise <- function(data, penalty_range = c(1e-5,10)){
 
           # convert the data to json
           json <- jsonlite::toJSON(c(data_set = list(data.crops@data.set), cpts_full = clean_full_cpts, solution_path = list(solution_path_df), d_info = list(info_df)), pretty = TRUE)
-          print(json)
+          #print(json)
           #output/send to client
           output$main_data <- renderD3({
                 r2d3(data=json, script = system.file("JS/univariate_visualisation.js", package = "CpVis"), d3_version = 4, container = "div")
