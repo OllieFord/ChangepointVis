@@ -69,30 +69,30 @@ var ypadding = 90;
 
 // ---------------- Setup scales ---------------------
 var mainXScale = d3.scaleLinear()
-    .domain([d3.min(data.data_set), data.data_set.length-1]) // input
-    .range([xpadding+5, width - xpadding]);
+    .domain([0, data.data_set.length-1]) // input
+    .range([xpadding+5, width - xpadding]).nice();
 
 var mainYScale = d3.scaleLinear()
 							.domain([d3.min(data.data_set), d3.max(data.data_set)])
-							.range([height - ypadding, 5]);
+							.range([height - ypadding, 5]).nice();
 
 var histYScale = d3.scaleLinear()
 							.domain([d3.min(counts_values), d3.max(counts_values)])
-							.range([height,  height - ypadding]);
+							.range([height,  height - ypadding]).nice();
 
 var sp_cp_min = d3.min(data.solution_path, function(d) { return +d.changepoints;});
 var sp_cp_max = d3.max(data.solution_path, function(d) { return +d.changepoints;});
 
 var spXScale = d3.scaleLinear()
     .domain([sp_cp_min, sp_cp_max]) // input
-    .range([xpadding+5, width - xpadding]);
+    .range([xpadding+5, width - xpadding]).nice();
 
 var sp_val_min = d3.min(data.solution_path, function(d) { return +d.penalty_values;});
 var sp_val_max = d3.max(data.solution_path, function(d) { return +d.penalty_values;});
 
 var spYScale = d3.scaleLinear()
 							.domain([sp_val_min, sp_val_max])
-							.range([height - ypadding, 25]);
+							.range([height - ypadding, 25]).nice();
 
 var mxAxis = d3.axisBottom()
 							  .scale(mainXScale);
@@ -122,14 +122,20 @@ var solution_plot = div
   .append("svg")
   .attr("class", "solution_path")
   .attr("viewBox", "0 0 "+  (width + margin.left + margin.right) +" " + (height + margin.top + margin.bottom))
-  //.attr("width", width + margin.left + margin.right)
-  //.attr("height", height + margin.top + margin.bottom)
 
+var info = d3.select(".info")
+var m_hist = d3.select("#mean_hist"),
+    mwidth = +m_hist.attr("width"),
+    mheight = +m_hist.attr("height")
 
-var info = d3.select("#data_overview")
+var mean_hist_div = document.getElementById("mean_hist");
+var mh_width = mean_hist_div.clientWidth;
+var mh_height = mean_hist_div.clientHeight;
+var mh_margin = {top: 50, right: 50, bottom: 50, left: 50};
+
 // necesary for plot reszies (if removed plots duplicate)
 info.selectAll(".chart").remove();
-info.selectAll(".mean_histogram").remove();
+m_hist.selectAll(".mean_histogram").remove();
 
 var info_plot = info
         .append("div")
@@ -139,14 +145,11 @@ var info_plot = info
         .style("border-radius", "2px")
         .style("box-shadow", "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)")
 
-var mean_hist = info
+var mean_hist = m_hist
         .append("svg")
         .attr("class", "mean_histogram")
-        .attr("width", (width / 4) + margin.left - margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .style("background-color", base_colour)
-        .style("border-radius", "2px")
-        .style("box-shadow", "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)")
+        .attr("width", mh_width)
+        .attr("height", mh_height)
 // --------------------------------------- MAIN PLOT -------------------------------------------
 
 var line = d3.line()
@@ -186,9 +189,18 @@ main_plot.append("text")
       .style("text-anchor", "middle")
       .attr("font-size", "2rem")
       .text("Value");
+/*
+main_plot.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0- margin.left/16)
+      .attr("x",0 - (height /1.2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .attr("font-size", "1rem")
+      .text("Total Changepoint Frequency");
+*/
 
-
-// ------------------------------------- "Histogram"  ---------------------------------------------------
+// ------------------------------------- "changepoint freqency"  ---------------------------------------------------
 main_plot.selectAll(".bar")
       .data(hist_data)
     .enter().append("rect")
@@ -197,7 +209,7 @@ main_plot.selectAll(".bar")
       .attr("width", 2)
       .attr("y", function(d) { return histYScale(d.count);})
       .attr("height", function(d) { return height - histYScale(d.count);})
-      .style("opacity", 0.6)
+      .style("opacity", 0.3)
       .style("fill", secondary_colour);
 
 
@@ -222,6 +234,35 @@ var rows = tbody.selectAll('tr')
 rows.append('td').text(function(d) { return d.ind; });
 rows.append('td').text(function(d) { return d.values; });
 
+
+
+// ------------------------------------- means histogram --------------------------------------------
+
+
+var mean_hist_x = d3.scaleLinear()
+    .domain([d3.min(data.data_set), d3.max(data.data_set)])
+    .range([mh_margin.left, mh_width- mh_margin.right]).nice();
+
+var mean_hist_y = d3.scaleLinear()
+    .domain([0, 0.2])
+    .range([mh_height - mh_margin.bottom, mh_margin.top]).nice();
+
+mean_hist.append("g")
+    .attr("class", "axis hist_x_axis")
+    .attr("transform", "translate(0," + (mh_height - mh_margin.bottom) + ")")
+    .call(d3.axisBottom(mean_hist_x))
+
+mean_hist.append("text")
+      .attr("transform", "translate(" + (mh_width/2) + " ," + (mh_height - 5) + ")")
+      .style("text-anchor", "middle")
+      .attr("font-size", "1.5rem")
+      .text("Mean's");
+
+mean_hist.append("g")
+    .attr("class", "axis hist_y_axis")
+    .attr("transform", "translate(" + mh_margin.left + ",0)")
+    .call(d3.axisLeft(mean_hist_y).ticks(null, "%"));
+
 // ------------------------------------- Solution Path --------------------------------------------
 
 solution_plot.selectAll("circle")
@@ -243,6 +284,8 @@ solution_plot.selectAll("circle")
 			     solution_plot.selectAll("#focus_circle").remove();
 			     main_plot.selectAll("#change_point").remove();
 			     main_plot.selectAll(".pc-means").remove();
+			     mean_hist.selectAll(".hist_update").remove();
+			     mean_hist.selectAll(".hist_y_axis").remove();
 
 			     var filtered_change_location = all_changepoints[changepoint_lengths.indexOf(d.changepoints)];
 
@@ -342,6 +385,7 @@ solution_plot.selectAll("circle")
       			            .attr("cy", lyPosition)
       			            .attr("r", 4)
       			            .attr("fill", accent_colour);
+
               // piecewise constant lines
       			 for (i = 0; i< means.length; i++){
       			   main_plot.append("line")
@@ -355,9 +399,62 @@ solution_plot.selectAll("circle")
       			          .style("fill", "none")
       			          .style("stroke", accent_colour)
       			          .style("stroke-width", 3);
-
       			 }
+
+
+      			 var mean_hist_y = d3.scaleLinear()
+                    .domain([0, ((1/means.length) + 0.15)])
+                    .range([mh_height - mh_margin.bottom, mh_margin.top]).nice();
+
+            mean_hist.append("g")
+                    .attr("class", "axis hist_y_axis")
+                    .attr("transform", "translate(" + mh_margin.left + ",0)")
+                    .call(d3.axisLeft(mean_hist_y).ticks(null, "%"));
+
+
+      			 var n = means.length,
+                 bins = d3.histogram().domain(mean_hist_x.domain()).thresholds(60)(means),
+                 density = kernelDensityEstimator(kernelEpanechnikov(3), mean_hist_x.ticks(60))(means);
+
+            mean_hist.insert("g", "*")
+                .attr("fill", accent_colour)
+              .selectAll("rect")
+              .data(bins)
+              .enter().append("rect")
+                .attr("class", "hist_update")
+                .attr("x", function(d) { return mean_hist_x(d.x0) + 1; })
+                .attr("y", function(d) { return mean_hist_y(d.length / n); })
+                .attr("width", function(d) { return mean_hist_x(d.x1) - mean_hist_x(d.x0) - 1; })
+                .attr("height", function(d) { return mean_hist_y(0) - mean_hist_y(d.length / n); });
+
+
+            mean_hist.append("path")
+                .datum(density)
+                .attr("class", "hist_update")
+                .attr("fill", "none")
+                .attr("stroke", "#000")
+                .attr("stroke-width", 1.5)
+                .attr("stroke-linejoin", "round")
+                .attr("d",  d3.line()
+                    .curve(d3.curveBasis)
+                    .x(function(d) { return mean_hist_x(d[0]); })
+                    .y(function(d) { return mean_hist_y(d[1]); }));
 			   });
+
+
+function kernelDensityEstimator(kernel, X) {
+  return function(V) {
+    return X.map(function(x) {
+      return [x, d3.mean(V, function(v) { return kernel(x - v); })];
+    });
+  };
+}
+
+function kernelEpanechnikov(k) {
+  return function(v) {
+    return Math.abs(v /= k) <= 1 ? 0.75 * (1 - v * v) / k : 0;
+  };
+}
 
 solution_plot.append("g")
     .attr("class", "x axis")

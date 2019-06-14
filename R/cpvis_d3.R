@@ -3,7 +3,7 @@
 #'
 #' This function takes a univariate dataset as input, as well as a range of penalty values.
 #' It uses cpt.mean with the "PELT" method and "CROPS" penalty type from the changepoint package.
-#' @name cpVis_d3
+#' @name cpvisVisualise
 #'
 #' @param data A univariate dataset
 #' @param penalty_range A range of penalty values
@@ -15,14 +15,8 @@
 #' data = c(rnorm(100,0,1),rnorm(100,5,1))
 #' cpVis_d3(data, penalty_range = c(1e-5,10))
 #'
-library(r2d3)
-library(jsonlite)
-library(htmlwidgets)
-library(shiny)
-library(shinyjs)
 
-cpVis_d3 <- function(data, penalty_range = c(1e-5,10)){
-
+cpVisualise <- function(data, penalty_range = c(1e-5,10)){
   require(shiny)
   require(changepoint)
   require(r2d3)
@@ -34,7 +28,8 @@ cpVis_d3 <- function(data, penalty_range = c(1e-5,10)){
         ui <- fluidPage(
           inlineCSS(".axis {font: 10px sans-serif;}
                     h2 {text-align: center;}
-                    #solution_path {height: 400px; width: 70vw; margin: 30px;}"),
+                    #solution_path {height: 400px; width: 70vw; margin: 30px;}
+                    #mean_hist {height: 400px; width: 100%}"),
 
           tags$head(
           #tags$link(rel = "stylesheet", type = "text/css", href = "main.css")
@@ -47,7 +42,10 @@ cpVis_d3 <- function(data, penalty_range = c(1e-5,10)){
                                  #tags$div(id = "data_overview")
                                  ),
                         tags$div(class = "col-lg-3",
-                                 tags$div(id = "data_overview")
+                                 tags$div(id = "data_overview",
+                                          tags$div(class = "info"),
+                                          tags$div(id = "mean_hist")
+                                          )
                                  )
                         )
         ),
