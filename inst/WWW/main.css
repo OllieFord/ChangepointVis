@@ -1,0 +1,80 @@
+.axis {
+  font: 10px sans-serif;
+}
+h2 {
+  text-align: center;
+}
+.line {
+  fill: steelblue; clip-path: url(#clip);
+}
+.block {
+  display: block;
+}
+
+.block input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.small-box {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  border-width: 1.5px;
+  border-style: solid;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+input {
+  margin: 10px;
+}
+
+#2 {
+  color: #d7191c;
+}
+span {
+  vertical-align: middle;
+}
+
+#control {
+  margin-top: 50px;
+}
+
+label {
+  font-weight: 300;
+}
+
+.small-box.zero {
+  background-color: #ffffff;
+  box-shadow: 0px 18px 40px -12px #ffffff;
+  border-color: #F5F5F5;
+}
+
+.small-box.one {
+  background-color: #2c7bb6;
+  box-shadow: 0px 18px 40px -12px #2c7bb6;
+  border-color: #F5F5F5;
+}
+
+.small-box.two {
+  background-color: #d7191c;
+  box-shadow: 0px 18px 40px -12px #d7191c;
+  border-color: #F5F5F5;
+}
+
+.block:hover input ~ .select {
+  background-color: #ccc;
+}
+
+.block input:checked ~ .select {
+  background-color: #E3F2FD;
+}
+
+
+
+

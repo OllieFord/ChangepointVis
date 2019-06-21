@@ -21,6 +21,6 @@ It uses cpt.mean with the "PELT" method and "CROPS" penalty type from the change
 }
 \examples{
 data = c(rnorm(100,0,1),rnorm(100,5,1))
-cpVis_d3(data, penalty_range = c(1e-5,10))
+cpVisualise(data, penalty_range = c(1e-5,10))
 
 }
