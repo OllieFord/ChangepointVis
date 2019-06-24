@@ -35,7 +35,7 @@ cpLabel <- function(data){
                         tags$div(class = "col-lg-2",
                                  tags$div(id = "control",
                                  HTML("<form id='label-type'>
-                                        <label class='block'> <div class='small-box zero'></div> <input type='radio' id='0' name='mode' checked></input> <span class='select'>   No Changepoint</span> </label>
+                                        <label class='block'> <div class='small-box zero'></div> <input type='radio' id='0' name='mode' checked></input> <span class='select'>   No label</span> </label>
                                         <label class='block'> <div class='small-box one'></div> <input type='radio' id='1' name='mode'></input> <span class='select' >    Changepoint Region</span></label>
                                         <label class='block'><div class='small-box two'></div> <input type='radio' id='2' name='mode'></input> <span class='select' >   Single Changepoint</span></label>
                                         </form>"))

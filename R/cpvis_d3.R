@@ -53,24 +53,25 @@ cpVisualise <- function(data, penalty_range = c(1e-5,10)){
         server <- function(input, output, session) {
 
           # run the change point method on the data - for differnet penalty values
-          data.crops = cpt.mean(data, method="PELT", penalty="CROPS", pen.value=penalty_range)
+          data.crops = cpt.mean(data, method="PELT", penalty="CROPS", pen.value=penalty_range, class=FALSE)
 
-          full_cpts <- split(data.crops@cpts.full, 1:nrow(data.crops@cpts.full))
+          # list of all changepoints for each tested penalty value
+          all_changepoints <- data.crops[2]
+          clean_full_cpts <- unname(lapply(all_changepoints, function(x) x[!is.na(x)]))
 
-          #remove NA values and names
-          clean_full_cpts = list(unname(lapply(full_cpts, function(x) x[!is.na(x)])))
+          # dataframe that contains "beta_interval", "numberofchangepoints" and "penalised_cost"
+          cpt_data <- t(data.frame(data.crops[1]))
+          beta_interval = cpt_data[,1]
+          numberofchangepoints = cpt_data[,2]
+          penalised_cost = cpt_data[,3]
+          solution_path_df <- data.frame(beta_interval, numberofchangepoints, penalised_cost)
+          colnames(solution_path_df) <- c("beta_interval", "numberofchangepoints","penalised_cost")
 
-          # list containing number of changepoints for every penalty value
-          number_changepoints = list(apply(data.crops@cpts.full, 1, function(x) sum(x > 0, na.rm = TRUE)))
-
-          #list containing all penalty values
-          penalty_values = list(data.crops@pen.value.full)
-
-
-          info <- list("Total Penalty Values" = lengths(penalty_values),
+          # general info about plot
+          info <- list("Total Penalty Values" = nrow(solution_path_df),
                        "Penalty Range" = toString(penalty_range),
-                       "Max Penalty Value" = max(unlist(data.crops@pen.value.full)),
-                       "Min Penalty Value" = min(unlist(data.crops@pen.value.full)),
+                       "Max Penalty Value" = max(solution_path_df[,1]),
+                       "Min Penalty Value" = min(solution_path_df[,1]),
                        "Data Points" = length(data),
                        "Dataset Mean" = mean(data),
                        "Dataset Variance" = var(data),
@@ -78,13 +79,9 @@ cpVisualise <- function(data, penalty_range = c(1e-5,10)){
                        "Min Data Value" =  min(unlist(data)))
           info_df <- data.frame(stack(info))
 
-          # dataframe containing changepoints and penalty values as columns
-          solution_path_df <- data.frame(number_changepoints, penalty_values)
-          colnames(solution_path_df) <- c("changepoints", "penalty_values")
-
           # convert the data to json
-          json <- jsonlite::toJSON(c(data_set = list(data.crops@data.set), cpts_full = clean_full_cpts, solution_path = list(solution_path_df), d_info = list(info_df)), pretty = TRUE)
-          #print(json)
+          json <- jsonlite::toJSON(c(data_set = list(data), cpts_full = clean_full_cpts, solution_path = list(solution_path_df), d_info = list(info_df)), pretty = TRUE)
+
           #output/send to client
           output$main_data <- renderD3({
                 r2d3(data=json, script = system.file("JS/univariate_visualisation.js", package = "CpVis"), d3_version = 4, container = "div")

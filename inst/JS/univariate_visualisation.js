@@ -9,7 +9,6 @@ const accent_colour = "#4363d8"; //blue
 const base_colour = "#c5c5c5"; //Grey
 const secondary_colour = "#f58231"; //orange
 
-
 // ---------------- Convert data  ---------------------
 // data manipulation on startup -(these are quality of life changes)
 
@@ -80,15 +79,15 @@ var histYScale = d3.scaleLinear()
 							.domain([d3.min(counts_values), d3.max(counts_values)])
 							.range([height,  height - ypadding]).nice();
 
-var sp_cp_min = d3.min(data.solution_path, function(d) { return +d.changepoints;});
-var sp_cp_max = d3.max(data.solution_path, function(d) { return +d.changepoints;});
+var sp_cp_min = d3.min(data.solution_path, function(d) { return +d.numberofchangepoints - 1;});
+var sp_cp_max = d3.max(data.solution_path, function(d) { return +d.numberofchangepoints - 1;});
 
 var spXScale = d3.scaleLinear()
     .domain([sp_cp_min, sp_cp_max]) // input
     .range([xpadding+5, width - xpadding]).nice();
 
-var sp_val_min = d3.min(data.solution_path, function(d) { return +d.penalty_values;});
-var sp_val_max = d3.max(data.solution_path, function(d) { return +d.penalty_values;});
+var sp_val_min = d3.min(data.solution_path, function(d) { return +d.beta_interval;});
+var sp_val_max = d3.max(data.solution_path, function(d) { return +d.beta_interval;});
 
 var spYScale = d3.scaleLinear()
 							.domain([sp_val_min, sp_val_max])
@@ -270,10 +269,10 @@ solution_plot.selectAll("circle")
 			   .enter()
 			   .append("circle")
 			   .attr("cx", function(d) {
-			   		return spXScale(d.changepoints);
+			   		return spXScale((d.numberofchangepoints -1));
 			   })
 			   .attr("cy", function(d) {
-			   		return spYScale(d.penalty_values);
+			   		return spYScale(d.beta_interval);
 			   })
 			   .attr("r", 4)
 			   .attr("fill", base_colour)
@@ -287,7 +286,7 @@ solution_plot.selectAll("circle")
 			     mean_hist.selectAll(".hist_update").remove();
 			     mean_hist.selectAll(".hist_y_axis").remove();
 
-			     var filtered_change_location = all_changepoints[changepoint_lengths.indexOf(d.changepoints)];
+			     var filtered_change_location = all_changepoints[changepoint_lengths.indexOf((d.numberofchangepoints -1))];
 
 
           // split the data into segemnts
@@ -334,7 +333,7 @@ solution_plot.selectAll("circle")
       			     .attr("font-weight", "bold")
       			     .attr("font-size", "20px")
       			     .attr("fill", "black")
-      			     .text("Pv: " + d.penalty_values)
+      			     .text("Pv: " + d.beta_interval)
       			     .style("opacity", 0.6)
 
             // tooltip changepoint value text
@@ -347,7 +346,7 @@ solution_plot.selectAll("circle")
       			     .attr("font-weight", "bold")
       			     .attr("font-size", "20px")
       			     .attr("fill", "black")
-      			     .text(d.changepoints)
+      			     .text((d.numberofchangepoints - 1))
       			     .style("opacity", 0.6)
 
             // selection horizontal line

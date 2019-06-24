@@ -12,7 +12,9 @@ License: GPL
 Encoding: UTF-8
 LazyData: true
 Suggests: 
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    knitr,
+    rmarkdown
 RoxygenNote: 6.1.1
 Imports: 
     shiny,
@@ -20,3 +22,4 @@ Imports:
     r2d3,
     jsonlite,
     htmlwidgets
+VignetteBuilder: knitr

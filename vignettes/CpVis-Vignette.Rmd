@@ -1,0 +1,32 @@
+---
+title: "Introduction to CpVis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{CpVis-Vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(CpVis)
+```
+
+CpVis is an package that enables interactive visualisation for change point exploration and labeling built on top of the changepoint package. The package can be seperated into two high level components:
+
+1. Data Exploration/ Visualisation (CpVisualise)
+2. Data Labeling (CpLabel)
+
+### CpVisualise
+
+CpVisualise makes use of the change point package and more specificaly the PELT method to help you quickly explore and find the most suitable penalty value for your data. In addition to this core functionality, CpVisualise also provides general statistics about your data as well as a interactive histogram showing the means for the piecewise constant intervals (means between changepoints). In short the goal of this function is to allow you to quickly find the most suitable penalty value for your particular dataset.  
+
+### CpLabel
+
+CpLabel allows you to label your time seriese data so that it can be used to train the penaltylearning algorithm from Hocking et. al 2017.  
