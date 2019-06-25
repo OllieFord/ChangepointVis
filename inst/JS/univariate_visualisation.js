@@ -3,11 +3,14 @@
 // r2d3: https://rstudio.github.io/r2d3
 //
 
+
+
 var data = r2d3.data;
 
 const accent_colour = "#4363d8"; //blue
 const base_colour = "#c5c5c5"; //Grey
 const secondary_colour = "#f58231"; //orange
+
 
 // ---------------- Convert data  ---------------------
 // data manipulation on startup -(these are quality of life changes)
@@ -51,7 +54,6 @@ for (i = 0; i < counts_values.length; i++) {
   var tmp = {loc:counts_keys[i], count:counts_values[i] };
   hist_data.push(tmp);
 }
-
 
 var data_table = [];
 
@@ -262,7 +264,12 @@ mean_hist.append("g")
     .call(d3.axisLeft(mean_hist_y).ticks(null, "%"));
 
 // ------------------------------------- Solution Path --------------------------------------------
+var pen_cost_min = d3.min(data.solution_path, function(d) { return +d.penalised_cost;});
+var pen_cost_max = d3.max(data.solution_path, function(d) { return +d.penalised_cost;});
 
+var radius_range = d3.scaleLinear()
+                          .domain([pen_cost_min, pen_cost_max])
+                          .range([2, 5]);
 solution_plot.selectAll("circle")
 			   .data(data.solution_path)
 			   .enter()
@@ -273,7 +280,7 @@ solution_plot.selectAll("circle")
 			   .attr("cy", function(d) {
 			   		return spYScale(d.beta_interval);
 			   })
-			   .attr("r", 4)
+			   .attr("r", function(d) {return radius_range(d.penalised_cost)})
 			   .attr("fill", base_colour)
 			   .on("mouseover", function(d){
 			     solution_plot.selectAll("#tooltip").remove();
@@ -412,12 +419,9 @@ solution_plot.selectAll("circle")
       			 }
 
 
-
-
-
       			 var n = means.length,
-                 bins = d3.histogram().domain(mean_hist_x.domain()).thresholds(50)(means),
-                 density = kernelDensityEstimator(kernelEpanechnikov(3), mean_hist_x.ticks(50))(means);
+                 bins = d3.histogram().domain(mean_hist_x.domain()).thresholds(40)(means),
+                 density = kernelDensityEstimator(kernelEpanechnikov(3), mean_hist_x.ticks(40))(means);
             console.log(d3.max(bins, function(d) { return d.length; }));
 
             mean_hist_y.domain([0, (1/ d3.max(bins, function(d) { return d.length; }))])
