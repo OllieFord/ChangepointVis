@@ -14,7 +14,7 @@
 #' @examples
 #' data = c(rnorm(100,0,1),rnorm(100,5,1))
 #' cpVisualise(data, penalty_range = c(1e-5,10))
-#'
+#
 
 cpVisualise <- function(data, penalty_range = c(1e-5,10)){
   require(shiny)

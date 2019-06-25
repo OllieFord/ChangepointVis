@@ -243,7 +243,6 @@ var mean_hist_x = d3.scaleLinear()
     .range([mh_margin.left, mh_width- mh_margin.right]).nice();
 
 var mean_hist_y = d3.scaleLinear()
-    .domain([0, 0.2])
     .range([mh_height - mh_margin.bottom, mh_margin.top]).nice();
 
 mean_hist.append("g")
@@ -349,6 +348,18 @@ solution_plot.selectAll("circle")
       			     .text((d.numberofchangepoints - 1))
       			     .style("opacity", 0.6)
 
+      		solution_plot.append("text")
+      			     .attr("id", "tooltip")
+      			     .attr("x", (lxPosition + 90))
+      			     .attr("y", height - margin.bottom)
+      			     .attr("text-anchor", "middle")
+      			     .attr("font-family", "sans-serif")
+      			     .attr("font-weight", "bold")
+      			     .attr("font-size", "20px")
+      			     .attr("fill", "black")
+      			     .text((d.penalised_cost))
+      			     .style("opacity", 0.6)
+
             // selection horizontal line
 			     solution_plot.append("line")
 			            .attr("id", "selection_line")
@@ -401,19 +412,20 @@ solution_plot.selectAll("circle")
       			 }
 
 
-      			 var mean_hist_y = d3.scaleLinear()
-                    .domain([0, ((1/means.length) + 0.15)])
-                    .range([mh_height - mh_margin.bottom, mh_margin.top]).nice();
+
+
+
+      			 var n = means.length,
+                 bins = d3.histogram().domain(mean_hist_x.domain()).thresholds(50)(means),
+                 density = kernelDensityEstimator(kernelEpanechnikov(3), mean_hist_x.ticks(50))(means);
+            console.log(d3.max(bins, function(d) { return d.length; }));
+
+            mean_hist_y.domain([0, (1/ d3.max(bins, function(d) { return d.length; }))])
 
             mean_hist.append("g")
                     .attr("class", "axis hist_y_axis")
                     .attr("transform", "translate(" + mh_margin.left + ",0)")
                     .call(d3.axisLeft(mean_hist_y).ticks(null, "%"));
-
-
-      			 var n = means.length,
-                 bins = d3.histogram().domain(mean_hist_x.domain()).thresholds(60)(means),
-                 density = kernelDensityEstimator(kernelEpanechnikov(3), mean_hist_x.ticks(60))(means);
 
             mean_hist.insert("g", "*")
                 .attr("fill", accent_colour)
