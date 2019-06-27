@@ -3,8 +3,6 @@
 // r2d3: https://rstudio.github.io/r2d3
 //
 
-
-
 var data = r2d3.data;
 
 const accent_colour = "#4363d8"; //blue
@@ -78,7 +76,6 @@ var mainYScale = d3.scaleLinear()
 							.range([height - ypadding, 5]).nice();
 
 var histYScale = d3.scaleLinear()
-							.domain([d3.min(counts_values), d3.max(counts_values)])
 							.range([height,  height - ypadding]).nice();
 
 var sp_cp_min = d3.min(data.solution_path, function(d) { return +d.numberofchangepoints - 1;});
@@ -202,6 +199,7 @@ main_plot.append("text")
 */
 
 // ------------------------------------- "changepoint freqency"  ---------------------------------------------------
+/*
 main_plot.selectAll(".bar")
       .data(hist_data)
     .enter().append("rect")
@@ -213,6 +211,7 @@ main_plot.selectAll(".bar")
       .style("opacity", 0.3)
       .style("fill", secondary_colour);
 
+*/
 
 // ------------------------------------- info table --------------------------------------------
 
@@ -270,6 +269,8 @@ var pen_cost_max = d3.max(data.solution_path, function(d) { return +d.penalised_
 var radius_range = d3.scaleLinear()
                           .domain([pen_cost_min, pen_cost_max])
                           .range([2, 5]);
+
+
 solution_plot.selectAll("circle")
 			   .data(data.solution_path)
 			   .enter()
@@ -291,9 +292,9 @@ solution_plot.selectAll("circle")
 			     main_plot.selectAll(".pc-means").remove();
 			     mean_hist.selectAll(".hist_update").remove();
 			     mean_hist.selectAll(".hist_y_axis").remove();
+			     main_plot.selectAll(".changepoint_pacing").remove();
 
 			     var filtered_change_location = all_changepoints[changepoint_lengths.indexOf((d.numberofchangepoints -1))];
-
 
           // split the data into segemnts
 			    var segments = [];
@@ -415,14 +416,42 @@ solution_plot.selectAll("circle")
       			          .attr("y2", mainYScale(means[i]))
       			          .style("fill", "none")
       			          .style("stroke", accent_colour)
-      			          .style("stroke-width", 3);
+      			          .style("stroke-width", 2)
       			 }
 
+      			 histYScale.domain([0, ((d3.max(data.data_set) + Math.abs(d3.min(data.data_set))))])
+
+      			   for (i = 0; i< (means.length-1); i++){
+
+      			  main_plot.append("line")
+      			          .attr("class", "pc-means")
+      			          .transition()
+      			          .duration(300)
+      			          .attr("x1", mainXScale(filtered_change_location[i+1]))
+      			          .attr("y1", mainYScale((means[i])))
+      			          .attr("x2", mainXScale(filtered_change_location[i+1]))
+      			          .attr("y2", mainYScale((means[i+1])))
+      			          .style("fill", "none")
+      			          .style("stroke", accent_colour)
+      			          .style("stroke-width", 2);
+
+      			   main_plot.append("line")
+      			          .attr("class", "changepoint_pacing")
+      			          .transition()
+      			          .duration(300)
+      			          .attr("x1", mainXScale(filtered_change_location[i+1]))
+      			          .attr("y1", histYScale(0))
+      			          .attr("x2", mainXScale(filtered_change_location[i+1]))
+      			          .attr("y2", histYScale(Math.abs((means[i] - means[i+1]))))
+      			          .style("fill", "none")
+      			          .style("stroke", base_colour)
+      			          .style("stroke-width", 2);
+      			 }
 
       			 var n = means.length,
                  bins = d3.histogram().domain(mean_hist_x.domain()).thresholds(40)(means),
                  density = kernelDensityEstimator(kernelEpanechnikov(3), mean_hist_x.ticks(40))(means);
-            console.log(d3.max(bins, function(d) { return d.length; }));
+            //console.log(d3.max(bins, function(d) { return d.length; }));
 
             mean_hist_y.domain([0, (1/ d3.max(bins, function(d) { return d.length; }))])
 
