@@ -67,13 +67,14 @@ var xpadding = 60;
 var ypadding = 90;
 
 // ---------------- Setup scales ---------------------
+
 var mainXScale = d3.scaleLinear()
     .domain([0, data.data_set.length-1]) // input
     .range([xpadding+5, width - xpadding]).nice();
 
 var mainYScale = d3.scaleLinear()
 							.domain([d3.min(data.data_set), d3.max(data.data_set)])
-							.range([height - ypadding, 5]).nice();
+							.range([height - ypadding, 30]).nice();
 
 var histYScale = d3.scaleLinear()
 							.range([height,  height - ypadding]).nice();
@@ -96,15 +97,17 @@ var mxAxis = d3.axisBottom()
 							  .scale(mainXScale);
 
 var myAxis = d3.axisLeft()
-							  .scale(mainYScale)
+							  .scale(mainYScale);
 
 var spxAxis = d3.axisBottom()
 							  .scale(spXScale);
 
 var spyAxis = d3.axisLeft()
-							  .scale(spYScale)
+							  .scale(spYScale);
 
 // ---------------- Setup plot elements ---------------------
+
+var div = div.style("background", "none");
 
 // Create seperate svgs for each plot
 // Main plot
@@ -112,24 +115,45 @@ var main_plot = div
   .append("svg")
   .attr("class", "main_plot")
   .attr("viewBox", "0 0 "+  (width + margin.left + margin.right) +" " + (height + margin.top + margin.bottom))
-  //.attr("width", width + margin.left + margin.right)
-  //.attr("height", height + margin.top + margin.bottom)
+  .style("margin", "10 0 10 10")
+  .style("background", "#ffffff")
+  .style("border-radius", "4px")
+  .style("box-shadow", "0px 18px 40px -12px rgba(196,196,196,0.35)");
 
 // Solution Path plot
 var solution_plot = div
   .append("svg")
   .attr("class", "solution_path")
-  .attr("viewBox", "0 0 "+  (width + margin.left + margin.right) +" " + (height + margin.top + margin.bottom))
+  .attr("viewBox", "0 0 "+  (width + margin.left + margin.right) +" " + (height + margin.top - 30))
+  .style("margin", "10 0 10 10")
+  .style("background", "#ffffff")
+  .style("border-radius", "4px")
+  .style("box-shadow", "0px 18px 40px -12px rgba(196,196,196,0.35)");
 
-var info = d3.select(".info")
+
+var crosshair = main_plot.append("g")
+      .attr("class", "line");
+
+    // create horizontal line
+    crosshair.append("line")
+      .attr("id", "crosshairX")
+      .attr("class", "crosshair");
+
+    // create vertical line
+    crosshair.append("line")
+      .attr("id", "crosshairY")
+      .attr("class", "crosshair");
+
+var info = d3.select(".info");
+
 var m_hist = d3.select("#mean_hist"),
     mwidth = +m_hist.attr("width"),
-    mheight = +m_hist.attr("height")
+    mheight = +m_hist.attr("height");
 
 var mean_hist_div = document.getElementById("mean_hist");
 var mh_width = mean_hist_div.clientWidth;
 var mh_height = mean_hist_div.clientHeight;
-var mh_margin = {top: 50, right: 50, bottom: 50, left: 50};
+var mh_margin = {top: 20, right: 40, bottom: 40, left: 40};
 
 // necesary for plot reszies (if removed plots duplicate)
 info.selectAll(".chart").remove();
@@ -140,14 +164,20 @@ var info_plot = info
         .attr("class", "chart")
         .attr("width", (width / 4) + margin.left - margin.right)
         .attr("height", height + margin.top + margin.bottom)
-        .style("border-radius", "2px")
-        .style("box-shadow", "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)")
+        .style("border-radius", "4px")
+        .style("box-shadow", "0px 18px 40px -12px rgba(196,196,196,0.35)")
+        .style("background", "#ffffff")
+        .style("margin", "10px");
 
 var mean_hist = m_hist
         .append("svg")
         .attr("class", "mean_histogram")
-        .attr("width", mh_width)
-        .attr("height", mh_height)
+        .attr("width", mh_width - 20)
+        .attr("height", mh_height + mh_margin.top)
+        .style("margin", "10px")
+        .style("background", "#ffffff")
+        .style("border-radius", "4px")
+        .style("box-shadow", "0px 18px 40px -12px rgba(196,196,196,0.35)");
 // --------------------------------------- MAIN PLOT -------------------------------------------
 
 var line = d3.line()
@@ -171,7 +201,8 @@ main_plot.append("text")
       .attr("transform", "translate(" + (width/2) + " ," + (height + margin.top + 5) + ")")
       .style("text-anchor", "middle")
       .attr("font-size", "2rem")
-      .text("Time");
+      .text("Time")
+      .style("opacity", 0.75);
 
 main_plot.append("g")
     .attr("class", "y axis")
@@ -181,37 +212,13 @@ main_plot.append("g")
 // text label for the y axis
 main_plot.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 0- margin.left/18)
+      .attr("y", (0- margin.left/20) +10)
       .attr("x",0 - (height / 2))
       .attr("dy", "1em")
       .style("text-anchor", "middle")
       .attr("font-size", "2rem")
-      .text("Value");
-/*
-main_plot.append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 0- margin.left/16)
-      .attr("x",0 - (height /1.2))
-      .attr("dy", "1em")
-      .style("text-anchor", "middle")
-      .attr("font-size", "1rem")
-      .text("Total Changepoint Frequency");
-*/
-
-// ------------------------------------- "changepoint freqency"  ---------------------------------------------------
-/*
-main_plot.selectAll(".bar")
-      .data(hist_data)
-    .enter().append("rect")
-      .attr("class", "bar")
-      .attr("x", function(d) { return mainXScale(d.loc) })
-      .attr("width", 2)
-      .attr("y", function(d) { return histYScale(d.count);})
-      .attr("height", function(d) { return height - histYScale(d.count);})
-      .style("opacity", 0.3)
-      .style("fill", secondary_colour);
-
-*/
+      .text("Value")
+      .style("opacity", 0.75);
 
 // ------------------------------------- info table --------------------------------------------
 
@@ -241,7 +248,7 @@ rows.append('td').text(function(d) { return d.values; });
 
 var mean_hist_x = d3.scaleLinear()
     .domain([d3.min(data.data_set), d3.max(data.data_set)])
-    .range([mh_margin.left, mh_width- mh_margin.right]).nice();
+    .range([mh_margin.left, mh_width - mh_margin.right]).nice();
 
 var mean_hist_y = d3.scaleLinear()
     .range([mh_height - mh_margin.bottom, mh_margin.top]).nice();
@@ -249,13 +256,14 @@ var mean_hist_y = d3.scaleLinear()
 mean_hist.append("g")
     .attr("class", "axis hist_x_axis")
     .attr("transform", "translate(0," + (mh_height - mh_margin.bottom) + ")")
-    .call(d3.axisBottom(mean_hist_x))
+    .call(d3.axisBottom(mean_hist_x));
 
 mean_hist.append("text")
       .attr("transform", "translate(" + (mh_width/2) + " ," + (mh_height - 5) + ")")
       .style("text-anchor", "middle")
       .attr("font-size", "1.5rem")
-      .text("Mean's");
+      .text("Mean's")
+      .style("opacity", 0.75);
 
 mean_hist.append("g")
     .attr("class", "axis hist_y_axis")
@@ -324,7 +332,7 @@ solution_plot.selectAll("circle")
 
           //console.log(JSON.stringify(means));
 
-			     var xPosition = parseFloat(d3.select(this).attr("cx"))+ 70;
+			     var xPosition = parseFloat(d3.select(this).attr("cx"))+ 50;
 			     var yPosition = parseFloat(d3.select(this).attr("cy")) -10;
 			     var lxPosition = parseFloat(d3.select(this).attr("cx"));
 			     var lyPosition = parseFloat(d3.select(this).attr("cy"));
@@ -338,10 +346,10 @@ solution_plot.selectAll("circle")
       			     .attr("text-anchor", "middle")
       			     .attr("font-family", "sans-serif")
       			     .attr("font-weight", "bold")
-      			     .attr("font-size", "20px")
+      			     .attr("font-size", "15px")
       			     .attr("fill", "black")
       			     .text("Pv: " + d.beta_interval)
-      			     .style("opacity", 0.6)
+      			     .style("opacity", 0.75)
 
             // tooltip changepoint value text
       			solution_plot.append("text")
@@ -351,50 +359,53 @@ solution_plot.selectAll("circle")
       			     .attr("text-anchor", "middle")
       			     .attr("font-family", "sans-serif")
       			     .attr("font-weight", "bold")
-      			     .attr("font-size", "20px")
+      			     .attr("font-size", "15px")
       			     .attr("fill", "black")
       			     .text((d.numberofchangepoints - 1))
-      			     .style("opacity", 0.6)
+      			     .style("opacity", 0.75)
+
 
       		solution_plot.append("text")
-      			     .attr("id", "tooltip")
-      			     .attr("x", (lxPosition + 90))
-      			     .attr("y", height - margin.bottom)
-      			     .attr("text-anchor", "middle")
-      			     .attr("font-family", "sans-serif")
-      			     .attr("font-weight", "bold")
-      			     .attr("font-size", "20px")
-      			     .attr("fill", "black")
-      			     .text((d.penalised_cost))
-      			     .style("opacity", 0.6)
+      		         .attr("id", "tooltip")
+                  .attr("transform", "translate(" + (170) + " ," + (height) + ")")
+                  .attr("font-family", "sans-serif")
+                  .style("text-anchor", "left")
+                  .attr("font-weight", "bold")
+                  .attr("font-size", "2rem")
+                  .text((d.penalised_cost))
+                  .style("opacity", 0.75);
+
 
             // selection horizontal line
 			     solution_plot.append("line")
 			            .attr("id", "selection_line")
-      			      .attr("x1", lxPosition - 15)
+      			      .attr("x1", lxPosition - 7)
       			      .attr("y1", lyPosition)
       			      .attr("x2", 0 + xpadding)
       			      .attr("y2", lyPosition)
       			      .attr("stroke", accent_colour)
-      			      .attr("stroke-width", "2")
+      			      .attr("stroke-width", "1")
+      			      .attr("stroke-oppacity", "0.5")
 
             // selection vertical line
       			solution_plot.append("line")
 			            .attr("id", "selection_line")
       			      .attr("x1", lxPosition)
-      			      .attr("y1", lyPosition + 15)
+      			      .attr("y1", lyPosition + 7)
       			      .attr("x2", lxPosition)
       			      .attr("y2", height - ypadding + 17)
       			      .attr("stroke", accent_colour)
-      			      .attr("stroke-width", "2")
+      			      .attr("stroke-width", "1")
+      			      .attr("stroke-oppacity", "0.5")
 
       			 solution_plot.append("circle")
       			            .attr("id", "selection_circle")
 			                  .attr("cx", lxPosition)
       			            .attr("cy", lyPosition)
-      			            .attr("r", 15)
+      			            .attr("r", 7)
       			            .attr("stroke", accent_colour)
-      			            .attr("stroke-width", "2")
+      			            .attr("stroke-width", "1")
+      			            .attr("stroke-oppacity", "0.5")
       			            .attr("fill", "none");
 
       			 solution_plot.append("circle")
@@ -450,7 +461,7 @@ solution_plot.selectAll("circle")
 
       			 var n = means.length,
                  bins = d3.histogram().domain(mean_hist_x.domain()).thresholds(40)(means),
-                 density = kernelDensityEstimator(kernelEpanechnikov(3), mean_hist_x.ticks(40))(means);
+                 density = kernelDensityEstimator(kernelEpanechnikov(2), mean_hist_x.ticks(40))(means);
             //console.log(d3.max(bins, function(d) { return d.length; }));
 
             mean_hist_y.domain([0, (1/ d3.max(bins, function(d) { return d.length; }))])
@@ -496,13 +507,13 @@ function kernelDensityEstimator(kernel, X) {
 
 function kernelEpanechnikov(k) {
   return function(v) {
-    return Math.abs(v /= k) <= 1 ? 0.75 * (1 - v * v) / k : 0;
+    return Math.abs(v /= k) <= 1 ? 0.4 * (1 - v * v) / k : 0; // alter the "0.4" as this scales the amplitude - could be dynamic in the future
   };
 }
 
 solution_plot.append("g")
     .attr("class", "x axis")
-    .attr("transform", "translate(0," + (height - ypadding + 17) + ")")
+    .attr("transform", "translate(0," + (height - ypadding + 9) + ")")
     .attr("font-size", "2rem")
     .call(spxAxis);
 
@@ -511,7 +522,15 @@ solution_plot.append("text")
       .attr("transform", "translate(" + (width/2) + " ," + (height) + ")")
       .style("text-anchor", "middle")
       .attr("font-size", "2rem")
-      .text("Number of Changepoints");
+      .text("Number of Changepoints")
+      .style("opacity", 0.75);
+
+solution_plot.append("text")
+      .attr("transform", "translate(" + (20) + " ," + (height) + ")")
+      .style("text-anchor", "left")
+      .attr("font-size", "2rem")
+      .text("Penalised Cost: ")
+      .style("opacity", 0.75);
 
 
 solution_plot.append("g")
@@ -523,10 +542,11 @@ solution_plot.append("g")
 // text label for the y axis
 solution_plot.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 0- margin.left/18)
+      .attr("y", (0- margin.left/20) +10)
       .attr("x",0 - (height / 2))
       .attr("dy", "1em")
       .style("text-anchor", "middle")
       .attr("font-size", "2rem")
-      .text("Penalty Value");
+      .text("Penalty Value")
+      .style("opacity", 0.75);
 

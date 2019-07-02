@@ -26,16 +26,10 @@ cpVisualise <- function(data, penalty_range = c(1e-5,10)){
 
     shinyApp(
         ui <- fluidPage(
-          inlineCSS(".axis {font: 10px sans-serif;}
-                    h2 {text-align: center;}
-                    #solution_path {height: 400px; width: 70vw; margin: 30px;}
-                    #mean_hist {height: 400px; width: 100%}"),
 
-          tags$head(
-          #tags$link(rel = "stylesheet", type = "text/css", href = "main.css")
-        ),
+          tags$head(includeCSS(system.file('WWW', 'vis.css', package = 'CpVis'))),
 
-            titlePanel("Change Point Visualisation"),
+            tags$h3("CPVisualise"),
                tags$div(class = "row justify-content-md-left",
                         tags$div(class = "col-lg-9",
                                  tags$div(id = "main_output", d3Output("main_data"))
