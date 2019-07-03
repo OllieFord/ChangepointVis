@@ -131,19 +131,6 @@ var solution_plot = div
   .style("box-shadow", "0px 18px 40px -12px rgba(196,196,196,0.35)");
 
 
-var crosshair = main_plot.append("g")
-      .attr("class", "line");
-
-    // create horizontal line
-    crosshair.append("line")
-      .attr("id", "crosshairX")
-      .attr("class", "crosshair");
-
-    // create vertical line
-    crosshair.append("line")
-      .attr("id", "crosshairY")
-      .attr("class", "crosshair");
-
 var info = d3.select(".info");
 
 var m_hist = d3.select("#mean_hist"),
@@ -219,6 +206,7 @@ main_plot.append("text")
       .attr("font-size", "2rem")
       .text("Value")
       .style("opacity", 0.75);
+
 
 // ------------------------------------- info table --------------------------------------------
 
@@ -301,6 +289,7 @@ solution_plot.selectAll("circle")
 			     mean_hist.selectAll(".hist_update").remove();
 			     mean_hist.selectAll(".hist_y_axis").remove();
 			     main_plot.selectAll(".changepoint_pacing").remove();
+			     main_plot.selectAll(".cross_rect").remove();
 
 			     var filtered_change_location = all_changepoints[changepoint_lengths.indexOf((d.numberofchangepoints -1))];
 
@@ -494,6 +483,63 @@ solution_plot.selectAll("circle")
                     .curve(d3.curveBasis)
                     .x(function(d) { return mean_hist_x(d[0]); })
                     .y(function(d) { return mean_hist_y(d[1]); }));
+
+
+            var transpRect = main_plot.append("rect")
+                .attr("class", "cross_rect")
+                .attr("x", xpadding)
+                .attr("y", 30)
+                .attr("width", width - xpadding - xpadding)
+                .attr("height", height - ypadding - 30)
+                .attr("fill", "white")
+                .attr("opacity", 0);
+
+            var label = main_plot.append("text")
+                .attr("x", width - 5)
+                .attr("y", height + margin.top + 5)
+                .style("text-anchor", "end");
+
+            var verticalLine = main_plot.append("line")
+                .attr("opacity", 0)
+                .attr("y1", 30)
+                .attr("y2", height)
+                .attr("stroke", "black")
+                .attr("stroke-width", 1)
+                .attr("pointer-events", "none");
+
+            var horizontalLine = main_plot.append("line")
+                .attr("opacity", 0)
+                .attr("x1", xpadding)
+                .attr("x2", width - xpadding)
+                .attr("stroke", "black")
+                .attr("stroke-width", 1)
+                .attr("pointer-events", "none");
+
+            var crossXScale = d3.scaleLinear()
+                  .domain([xpadding +5, width - xpadding])
+                  .range([0, data.data_set.length-1])
+
+
+
+            var crossYScale = d3.scaleLinear()
+                                .domain([height - ypadding, 30])
+                                .range([mainYScale.domain()[0],mainYScale.domain()[1]])
+
+            transpRect.on("mousemove", function(){
+                mouse = d3.mouse(this);
+                mousex = mouse[0];
+                mousey = mouse[1];
+                verticalLine.attr("x1", mousex).attr("x2", mousex).attr("opacity", 1);
+                horizontalLine.attr("y1", mousey).attr("y2", mousey).attr("opacity", 1)
+                label.text(function() {
+                    return "x=" + Math.round(crossXScale(mousex)) + ", y=" + String(parseFloat(crossYScale(mousey)).toFixed(2));
+                  });
+
+            }).on("mouseout", function(){
+                verticalLine.attr("opacity", 0);
+                horizontalLine.attr("opacity", 0);
+                label.text("");
+            });
 			   });
 
 
@@ -549,4 +595,7 @@ solution_plot.append("text")
       .attr("font-size", "2rem")
       .text("Penalty Value")
       .style("opacity", 0.75);
+
+
+
 
