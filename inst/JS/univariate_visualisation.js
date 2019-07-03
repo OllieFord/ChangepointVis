@@ -208,6 +208,22 @@ main_plot.append("text")
       .style("opacity", 0.75);
 
 
+main_plot.append("text")
+      .attr("transform", "translate(" + 40 + " ," + (height - 35) + ")")
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .attr("font-size", "1rem")
+      .text("Absolute")
+      .style("opacity", 0.75);
+main_plot.append("text")
+      .attr("transform", "translate(" + 40 + " ," + (height - 25) + ")")
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .attr("font-size", "1rem")
+      .text("Change")
+      .style("opacity", 0.75);
+
+
 // ------------------------------------- info table --------------------------------------------
 
 var table = d3.select(".chart").append('table').attr("class", "table table-borderless");

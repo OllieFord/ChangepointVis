@@ -18,7 +18,7 @@
   <a href="#license">License</a>
 </p>
 
-![screenshot](https://raw.githubusercontent.com/OllieFord/ChangepointVis/master/images/cpvis.gif)
+![screenshot](https://raw.githubusercontent.com/OllieFord/ChangepointVis/master/images/demo.gif)
 
 ## Key Features
 
