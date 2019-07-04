@@ -335,6 +335,13 @@ solution_plot.selectAll("circle")
             means.push(avg);
           }
 
+          var weighted_mean = [];
+          for (i = 0; i < segments.length; i++){
+            for (var k = 0; k < segments[i].length; k++){
+              weighted_mean.push(means[i])
+            }
+          }
+
           //console.log(JSON.stringify(means));
 
 			     var xPosition = parseFloat(d3.select(this).attr("cx"))+ 50;
@@ -464,12 +471,12 @@ solution_plot.selectAll("circle")
       			          .style("stroke-width", 2);
       			 }
 
-      			 var n = means.length,
-                 bins = d3.histogram().domain(mean_hist_x.domain()).thresholds(40)(means),
-                 density = kernelDensityEstimator(kernelEpanechnikov(2), mean_hist_x.ticks(40))(means);
+      			 var n = weighted_mean.length,
+                 bins = d3.histogram().domain(mean_hist_x.domain()).thresholds(40)(weighted_mean),
+                 density = kernelDensityEstimator(kernelEpanechnikov(2), mean_hist_x.ticks(40))(weighted_mean);
             //console.log(d3.max(bins, function(d) { return d.length; }));
 
-            mean_hist_y.domain([0, (1/ d3.max(bins, function(d) { return d.length; }))])
+            mean_hist_y.domain([0, (d3.max(bins, function(d) { return d.length; })/100)])
 
             mean_hist.append("g")
                     .attr("class", "axis hist_y_axis")

@@ -54,6 +54,3 @@ h3 {
       pointer-events: all;
       stroke-width: 2px;
     }
-svg {
-  shape-rendering: crispEdges;
-    }
