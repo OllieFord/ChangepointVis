@@ -472,7 +472,7 @@ solution_plot.selectAll("circle")
       			 }
 
       			 var n = weighted_mean.length,
-                 bins = d3.histogram().domain(mean_hist_x.domain()).thresholds(40)(weighted_mean),
+                 bins = d3.histogram().domain(mean_hist_x.domain()).thresholds(d3.thresholdSturges)(weighted_mean),
                  density = kernelDensityEstimator(kernelEpanechnikov(2), mean_hist_x.ticks(40))(weighted_mean);
             //console.log(d3.max(bins, function(d) { return d.length; }));
 
