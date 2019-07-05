@@ -26,8 +26,13 @@
   - Visualise univariate time series data 
   - Automatically compute change points for a range of penalty values 
   - Interactively visualise changepoints for each penalty value 
-  - Histogram of means between changepoints
+  - Weighted histogram of means between changepoints (weigthed using segment lengths)
   - General information such as dataset mean, variance and max/min penalty values
+  - Absolute changepoint change and pacing
+  - Visualise penalised cost for each penalty value
+  
+* Changepoint labeling & supervised penalty learning
+  - Label regions of time series data 
 
 
 ## How To Use
