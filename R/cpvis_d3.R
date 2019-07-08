@@ -1,9 +1,19 @@
 
-#' Visual Interface for Changepoint Penalty Exploration (D3 version)
+#' Visual Interface for Unsupervised Changepoint Penalty Exploration
 #'
 #' This function takes a univariate dataset as input, as well as a range of penalty values.
 #' It uses cpt.mean with the "PELT" method and "CROPS" penalty type from the changepoint package.
-#' @name cpvisVisualise
+#' The function opens a web interface that displays:
+#' \enumerate{
+#' \item The univariate datset (top left)
+#' \item General statistics (top right)
+#' \item Solution path (bottom left)
+#' \item Weighted means histogram of the segments between changepoints.
+#' }
+#'
+#' The main form of interaction with the interface is through selecting each penalty value and then inspecting the resulting solution on the main plot (top left).
+#'
+#' @name cpVisualise
 #'
 #' @param data A univariate dataset
 #' @param penalty_range A range of penalty values
