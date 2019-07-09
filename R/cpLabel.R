@@ -40,7 +40,8 @@ cpLabel <- function(data){
                                         <label class='block'> <div class='small-box one'></div> <input type='radio' id='1' name='mode'></input> <span class='select' >    Changepoint Region</span></label>
                                         <label class='block'><div class='small-box two'></div> <input type='radio' id='2' name='mode'></input> <span class='select' >   Single Changepoint</span></label>
                                         </form>")),
-                                 tags$div(id="run")
+                                 tags$div(id="run",
+                                          HTML("<button type='button' class='btn btn-primary send_data'>Learn Penalties</button>"))
 
                                  )
                         )

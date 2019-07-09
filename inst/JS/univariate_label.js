@@ -94,9 +94,7 @@ focus.append("text")
       .attr("font-size", "2rem")
       .text("Value");
 
-const button = d3.select("#run")
-              .append("div")
-              .attr("class", "send-data")
+const button = d3.select(".send_data")
               .on("click", function(){
                 console.log("Data sent: " + labels)
                   Shiny.setInputValue(
