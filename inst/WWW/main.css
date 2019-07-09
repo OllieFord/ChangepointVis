@@ -34,6 +34,18 @@ input {
   margin: 10px;
 }
 
+#run {
+  height: 80px;
+  width: 100%;
+}
+
+.send-data {
+  height: 40px;
+  width: 70px;
+  background-color: blue;
+  border-radius: 3px;
+}
+
 #2 {
   color: #d7191c;
 }

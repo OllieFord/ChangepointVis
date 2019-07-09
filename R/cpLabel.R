@@ -28,6 +28,7 @@ cpLabel <- function(data){
       tags$head(includeCSS(system.file('WWW', 'main.css', package = 'CpVis'))),
 
       titlePanel("Change Point Labeling"),
+      verbatimTextOutput("selected"),
       tags$div(class = "row justify-content-md-left",
                tags$div(class = "col-lg-10",
                         tags$div(id = "main_output", d3Output("main_data"))),
@@ -38,7 +39,8 @@ cpLabel <- function(data){
                                         <label class='block'> <div class='small-box zero'></div> <input type='radio' id='0' name='mode' checked></input> <span class='select'>   No label</span> </label>
                                         <label class='block'> <div class='small-box one'></div> <input type='radio' id='1' name='mode'></input> <span class='select' >    Changepoint Region</span></label>
                                         <label class='block'><div class='small-box two'></div> <input type='radio' id='2' name='mode'></input> <span class='select' >   Single Changepoint</span></label>
-                                        </form>"))
+                                        </form>")),
+                                 tags$div(id="run")
 
                                  )
                         )
@@ -52,6 +54,10 @@ cpLabel <- function(data){
       #output/send to client
       output$main_data <- renderD3({
         r2d3(data=json, script = system.file("JS/univariate_label.js", package = "CpVis"), d3_version = 4, container = "div")
+      })
+
+      output$selected <- renderText({
+             input$data_sent
       })
 
     }

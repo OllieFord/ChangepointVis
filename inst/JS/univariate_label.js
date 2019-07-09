@@ -94,6 +94,18 @@ focus.append("text")
       .attr("font-size", "2rem")
       .text("Value");
 
+const button = d3.select("#run")
+              .append("div")
+              .attr("class", "send-data")
+              .on("click", function(){
+                console.log("Data sent: " + labels)
+                  Shiny.setInputValue(
+                    "data_sent",
+                    labels,
+                    {priority: "event"}
+                    )})
+
+
 function updateChart() {
       var form = document.getElementById("label-type");
       var form_val;
