@@ -1,0 +1,174 @@
+TODOs
+
+tests/support for flsa and HMM?
+
+- option to not stop in labelError if there is the same number of
+  changes in two models.
+
+2019.5.29
+
+ROChange: only return one threshold=="prediction" row, even if the
+predicted threshold=0 happens to be exactly on the border between two
+models.
+
+2019.5.28
+
+ROChange: informative error / test when there is more than one
+prediction per problem.
+
+2019.5.16
+
+non-strict equality in while(crossing point >= previous breakpoint) to
+avoid zero-length intervals.
+
+additional tests for modelSelectionFwd.
+
+2019.05.15
+
+Use modelSelectionFwd C algo for modelSelectionC R function.
+
+Fix featureMatrix/labelError/ROChange argument checks, if(logical vector length
+bigger than 1) was used and is now being checked in R-3.6.0.
+
+2019.05.03
+
+modelSelectionFwd and modelSelectionQuadratic.
+
+2019.04.18
+
+IntervalRegressionCV: informative reg.type undefined error.
+
+2019.02.28
+
+set last_lambda=0 when popping.
+
+2019.02.27
+
+import rather than Depend data.table
+
+2018.10.23
+
+IntervalRegression* stops with an informative error if there are no
+upper/lower limits.
+
+Remove Remotes/Travis deps.
+
+ROChange now works when there are problems with no thresholds,
+e.g. the FPR/TPR does not change at all when varying the penalty from
+0 to Inf.
+
+2018.09.24
+
+labelError stops for unrecognized annotations.
+
+2018.09.04
+
+use future.apply::future_lapply.
+
+2017.12.08
+
+remove vignette to pass CRAN check.
+
+2017.11.17
+
+In vignette, remove cghseg since it has memory problems, use Segmentor
+instead, with trivial 1 segment model when Segmentor fails.
+
+Remove cghseg from example(modelSelectionC).
+
+Don't use fullpage in vignette because that causes a NOTE on CRAN mac.
+
+2017.07.12
+
+try to fix vignette by using cghseg:::segmeanCO instead of Segmentor.
+
+2017.07.11
+
+there is some problem with Segmentor3IsBack on windows, which crashes
+our vignette re-building in CRAN checks on solaris... not sure why but
+try to fix via adding tryCatch in vignette.
+
+Add ... passed from IntervalRegressionCV to
+IntervalRegressionRegularized.
+
+2017.06.14
+
+labelError bugfix and test case for no predicted changes.
+
+Simplify examples -- avoid running Segmentor since this crashes on new
+versions of R on windows.
+
+2017.05.08
+
+IntervalRegressionCV uses future instead of foreach.
+
+2017.05.05
+
+corrections encountered while preparing tutorial,
+
+- theme_no_space() evaluated at runtime rather than theme_no_space
+  which was evaluated at build time.
+
+- stop with an error if there are models that have the same number of
+  changes -- this prevents problems for changepoint models, but
+  prevents using the code with L1 regularized models (fused lasso).
+
+- stop with an error in targetIntervals if the errors column is not
+  numeric. And return an errors column (the minimum number of
+  incorrect labels).
+
+2017.04.11
+
+prepare for CRAN submission:
+- convert to src/*.cpp files and register routines.
+- NULL variables to avoid CRAN checks about global variables.
+- vignette.
+- many more user-friendly error messages.
+- coefficients of IntervalRegression models are
+  now returned on the original scale.
+
+2017.03.24
+
+IntervalRegression S3 class with plot, print, and predict methods.
+
+largestContinuousMinimum C implementation.
+
+more informative error messages when arguments to R functions are not
+as expected.
+
+check for bigger/smaller data sets in ROChange and labelError.
+
+check for errors in C code and return with non-zero status.
+
+2017.01.31
+
+labelError works when there are more models than labels, and gives an
+informative error when there are no corresponding models for a given
+label.
+
+2017.01.21
+
+tests for peak model and for IntervalRegression functions.
+
+2017.01.20
+
+IntervalRegression* functions.
+
+2017.01.17
+
+labelError, targetIntervals, ROChange.
+
+2017.01.13
+
+C solver for linear time modelSelection algorithm, interface via
+modelSelectionC function.
+
+modelSelectionR function with original quadratic time algorithm in R
+code.
+
+modelSelection which takes a data.frame as input instead of vectors,
+and uses modelSelectionC.
+
+2017.01.12
+
+First version.

@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>R: A Fast Segmentation Algorithm</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+<h1> A Fast Segmentation Algorithm
+<img class="toplogo" src="../../../doc/html/Rlogo.svg" alt="[R logo]" />
+</h1>
+<hr/>
+<div style="text-align: center;">
+<a href="../../../doc/html/packages.html"><img class="arrow" src="../../../doc/html/left.jpg" alt="[Up]" /></a>
+<a href="../../../doc/html/index.html"><img class="arrow" src="../../../doc/html/up.jpg" alt="[Top]" /></a>
+</div><h2>Documentation for package &lsquo;Segmentor3IsBack&rsquo; version 2.0</h2>
+
+<ul><li><a href="../DESCRIPTION">DESCRIPTION file</a>.</li>
+</ul>
+
+<h2>Help Pages</h2>
+
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="Segmentor3IsBack-package.html">Segmentor3IsBack-package</a></td>
+<td>Implementation of the Pruned Dynamic Programming Algorithm for the exact optimal segmentation of profiles</td></tr>
+<tr><td style="width: 25%;"><a href="BestSegmentation.html">BestSegmentation</a></td>
+<td>BestSegmentation</td></tr>
+<tr><td style="width: 25%;"><a href="getBreaks.html">getBreaks</a></td>
+<td>Generic function</td></tr>
+<tr><td style="width: 25%;"><a href="getBreaks-methods.html">getBreaks-method</a></td>
+<td>~~ Methods for Function 'getBreaks' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getBreaks-methods.html">getBreaks-methods</a></td>
+<td>~~ Methods for Function 'getBreaks' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getCompression.html">getCompression</a></td>
+<td>Generic function</td></tr>
+<tr><td style="width: 25%;"><a href="getCompression-methods.html">getCompression-method</a></td>
+<td>~~ Methods for Function 'getCompression' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getCompression-methods.html">getCompression-methods</a></td>
+<td>~~ Methods for Function 'getCompression' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getCost.html">getCost</a></td>
+<td>Generic function</td></tr>
+<tr><td style="width: 25%;"><a href="getCost-methods.html">getCost-method</a></td>
+<td>~~ Methods for Function 'getCost' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getCost-methods.html">getCost-methods</a></td>
+<td>~~ Methods for Function 'getCost' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getData.html">getData</a></td>
+<td>Generic function</td></tr>
+<tr><td style="width: 25%;"><a href="getData-methods.html">getData-method</a></td>
+<td>~~ Methods for Function 'getData' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getData-methods.html">getData-methods</a></td>
+<td>~~ Methods for Function 'getData' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getKmax.html">getKmax</a></td>
+<td>Generic function</td></tr>
+<tr><td style="width: 25%;"><a href="getKmax-methods.html">getKmax-method</a></td>
+<td>~~ Methods for Function 'getKmax' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getKmax-methods.html">getKmax-methods</a></td>
+<td>~~ Methods for Function 'getKmax' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getLikelihood.html">getLikelihood</a></td>
+<td>Generic function</td></tr>
+<tr><td style="width: 25%;"><a href="getLikelihood-methods.html">getLikelihood-method</a></td>
+<td>~~ Methods for Function 'getLikelihood' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getLikelihood-methods.html">getLikelihood-methods</a></td>
+<td>~~ Methods for Function 'getLikelihood' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getMean.html">getMean</a></td>
+<td>Generic function</td></tr>
+<tr><td style="width: 25%;"><a href="getMean-methods.html">getMean-method</a></td>
+<td>~~ Methods for Function 'getMean' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getMean-methods.html">getMean-methods</a></td>
+<td>~~ Methods for Function 'getMean' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getModel.html">getModel</a></td>
+<td>Generic function</td></tr>
+<tr><td style="width: 25%;"><a href="getModel-methods.html">getModel-method</a></td>
+<td>~~ Methods for Function 'getModel' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getModel-methods.html">getModel-methods</a></td>
+<td>~~ Methods for Function 'getModel' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getOverdispersion.html">getOverdispersion</a></td>
+<td>Generic function</td></tr>
+<tr><td style="width: 25%;"><a href="getOverdispersion-methods.html">getOverdispersion-method</a></td>
+<td>~~ Methods for Function 'getOverdispersion' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getOverdispersion-methods.html">getOverdispersion-methods</a></td>
+<td>~~ Methods for Function 'getOverdispersion' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getParameters.html">getParameters</a></td>
+<td>Generic function</td></tr>
+<tr><td style="width: 25%;"><a href="getParameters-methods.html">getParameters-method</a></td>
+<td>~~ Methods for Function 'getParameters' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getParameters-methods.html">getParameters-methods</a></td>
+<td>~~ Methods for Function 'getParameters' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getPos.html">getPos</a></td>
+<td>Generic function</td></tr>
+<tr><td style="width: 25%;"><a href="getPos-methods.html">getPos-method</a></td>
+<td>~~ Methods for Function 'getPos' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="getPos-methods.html">getPos-methods</a></td>
+<td>~~ Methods for Function 'getPos' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="Segmentor.html">print.Segmentor</a></td>
+<td>Segmentor</td></tr>
+<tr><td style="width: 25%;"><a href="Segmentor.html">Segmentor</a></td>
+<td>Segmentor</td></tr>
+<tr><td style="width: 25%;"><a href="Segmentor-class.html">Segmentor-class</a></td>
+<td>Class "Segmentor"</td></tr>
+<tr><td style="width: 25%;"><a href="Segmentor-class.html">Segmentor-method, show</a></td>
+<td>Class "Segmentor"</td></tr>
+<tr><td style="width: 25%;"><a href="Segmentor-class.html">Segmentor-method,getBreaks</a></td>
+<td>Class "Segmentor"</td></tr>
+<tr><td style="width: 25%;"><a href="Segmentor-class.html">Segmentor-method,getCompression</a></td>
+<td>Class "Segmentor"</td></tr>
+<tr><td style="width: 25%;"><a href="Segmentor-class.html">Segmentor-method,getCost</a></td>
+<td>Class "Segmentor"</td></tr>
+<tr><td style="width: 25%;"><a href="Segmentor-class.html">Segmentor-method,getData</a></td>
+<td>Class "Segmentor"</td></tr>
+<tr><td style="width: 25%;"><a href="Segmentor-class.html">Segmentor-method,getKmax</a></td>
+<td>Class "Segmentor"</td></tr>
+<tr><td style="width: 25%;"><a href="Segmentor-class.html">Segmentor-method,getLikelihood</a></td>
+<td>Class "Segmentor"</td></tr>
+<tr><td style="width: 25%;"><a href="Segmentor-class.html">Segmentor-method,getMean</a></td>
+<td>Class "Segmentor"</td></tr>
+<tr><td style="width: 25%;"><a href="Segmentor-class.html">Segmentor-method,getModel</a></td>
+<td>Class "Segmentor"</td></tr>
+<tr><td style="width: 25%;"><a href="Segmentor-class.html">Segmentor-method,getOverdispersion</a></td>
+<td>Class "Segmentor"</td></tr>
+<tr><td style="width: 25%;"><a href="Segmentor-class.html">Segmentor-method,getParamters</a></td>
+<td>Class "Segmentor"</td></tr>
+<tr><td style="width: 25%;"><a href="Segmentor-class.html">Segmentor-method,getPos</a></td>
+<td>Class "Segmentor"</td></tr>
+<tr><td style="width: 25%;"><a href="Segmentor.html">Segmentor.default</a></td>
+<td>Segmentor</td></tr>
+<tr><td style="width: 25%;"><a href="Segmentor3IsBack-package.html">Segmentor3IsBack</a></td>
+<td>Implementation of the Pruned Dynamic Programming Algorithm for the exact optimal segmentation of profiles</td></tr>
+<tr><td style="width: 25%;"><a href="SelectModel.html">SelectModel</a></td>
+<td>SelectModel</td></tr>
+<tr><td style="width: 25%;"><a href="show-methods.html">show-method</a></td>
+<td>~~ Methods for Function 'show' in Package 'methods' ~~</td></tr>
+<tr><td style="width: 25%;"><a href="show-methods.html">show-methods</a></td>
+<td>~~ Methods for Function 'show' in Package 'methods' ~~</td></tr>
+</table>
+</body></html>

@@ -2,12 +2,8 @@
 //
 // r2d3: https://rstudio.github.io/r2d3
 //
-
-
 var data = r2d3.data;
 var labels = new Array(data.data_set.length).fill(0);
-
-//console.log(labels);
 
 const accent_colour = "#4363d8"; //blue
 const base_colour = "#c5c5c5"; //Grey
@@ -94,17 +90,13 @@ focus.append("text")
       .attr("font-size", "2rem")
       .text("Value");
 
-const button = d3.select(".send_data")
-              .on("click", function(){
-                console.log("Data sent: " + labels)
-                  Shiny.setInputValue(
-                    "data_sent",
-                    labels,
-                    {priority: "event"}
-                    )})
-
 
 function updateChart() {
+
+      var annotations = [];
+      var positions = [];
+      var min = [];
+      var max = [];
       var form = document.getElementById("label-type");
       var form_val;
     	for(var i=0; i<form.length; i++){
@@ -112,19 +104,20 @@ function updateChart() {
             form_val = form[i].id;
     	    }
     	   }
-    //console.log(form_val)
 
-    extent = d3.event.selection
+    extent = d3.event.selection;
     var range = d3.extent(extent, function(d) { return Math.round(label_scale(d)) });
     for (i = range[0] ; i< range[1]; i++){
-        labels[i] = parseInt(form_val)
+        labels[i] = parseInt(form_val);
     }
+
     //console.log(labels);
     focus.selectAll(".class_rect").remove();
     focus.selectAll(".overlay").remove();
     focus.selectAll(".selection").remove();
     focus.selectAll(".handle").remove();
 
+    r_data = annotationData(labels, annotations, min, max, positions);
 
     focus.selectAll("bar")
       .data(labels)
@@ -141,11 +134,48 @@ function updateChart() {
         if(d === 2) {return colour_4}
       })
       .style("opacity", "0.2")
-      .style("stroke", "none")
+      .style("stroke", "none");
 
       focus.call( d3.brushX()
         .extent( [ [width_padding, height_padding], [width-width_padding, height - height_padding] ] )
-        .on("end", updateChart)
-      )
+        .on("end", updateChart));
+
+}
+
+var button = d3.select(".send_data")
+              .on("click", function(){
+                //console.log(JSON.stringify(r_data));
+                  Shiny.setInputValue(
+                    "data_sent",
+                    JSON.stringify(r_data),
+                    {priority: "event"}
+                    )});
+
+function annotationData(labels, annotations, min, max, positions) {
+      for (i = 0; i < labels.length; i++) {
+        if(labels[i] != labels[i+1]) {
+          annotations.push(labels[i])
+          positions.push(i)
+          }
+      }
+
+      for (i = 0; i < positions.length; i++) {
+        if (i === 0){
+          min[i] = 0
+          max[i] = positions[i]
+        }
+        else {
+          min[i] = (positions[i-1] + 1)
+          max[i] = positions[i]
+        }
+      }
+
+      tmp_data = []
+      for (i = 0; i < annotations.length; i++) {
+        var tmp = {data:1, id:1, min:min[i], max:max[i], annotation:annotations[i] };
+        console.log(tmp)
+        tmp_data.push(tmp);
+      }
+      return tmp_data
 
 }

@@ -1,0 +1,24 @@
+Package: penaltyLearning
+Maintainer: Toby Dylan Hocking <toby.hocking@r-project.org>
+Author: Toby Dylan Hocking
+Version: 2019.5.29
+License: GPL-3
+Title: Penalty Learning
+Description: Implementations of algorithms from 
+ Learning Sparse Penalties for Change-point Detection
+ using Max Margin Interval Regression, by
+ Hocking, Rigaill, Vert, Bach
+ <http://proceedings.mlr.press/v28/hocking13.html>
+ published in proceedings of ICML2013.
+Suggests: Segmentor3IsBack, neuroblastoma, microbenchmark, testthat,
+        future, future.apply, directlabels (>= 2017.03.31)
+Depends: R (>= 2.10)
+URL: https://github.com/tdhock/penaltyLearning
+BugReports: https://github.com/tdhock/penaltyLearning/issues
+Imports: data.table (>= 1.9.8), geometry, ggplot2
+NeedsCompilation: yes
+Packaged: 2019-06-05 20:58:23 UTC; th798
+Repository: CRAN
+Date/Publication: 2019-06-09 16:50:03 UTC
+Built: R 3.6.0; x86_64-apple-darwin15.6.0; 2019-06-10 12:37:18 UTC; unix
+Archs: penaltyLearning.so.dSYM

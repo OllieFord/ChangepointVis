@@ -1,0 +1,31 @@
+useDynLib(Segmentor3IsBack)
+exportPattern("^[[:alpha:]]+")
+
+export(	Segmentor,
+	SelectModel,
+	BestSegmentation)
+
+exportClasses( Segmentor)
+
+exportMethods(
+		show,
+		getData,
+		getModel,
+		getKmax,
+		getOverdispersion,
+		getMean,
+		getBreaks,
+		getParameters,
+		getLikelihood,
+		getCost,
+		getPos,
+		getCompression
+)
+
+import("methods")
+importFrom("methods",show)
+importFrom("stats", "median")
+importFrom("utils", "str")
+ 
+S3method(print, Segmentor)
+S3method(Segmentor, default)

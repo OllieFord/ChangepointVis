@@ -1,0 +1,56 @@
+
+body {
+  background-color: #efefef;
+}
+
+.axis {
+  font: 10px sans-serif;
+}
+
+h3 {
+  text-align: left;
+  margin-left: 10px;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  opacity: 0.75;
+
+}
+
+#solution_path {
+  height: 400px;
+  width: 70vw;
+  margin: 30px;
+}
+
+.main_plot {
+  border-radius: 45px;
+  margin: 10px;
+}
+
+.solution_plot {
+  border-radius: 45px;
+  margin: 10px;
+}
+
+#mean_hist {
+  height: 400px;
+  width: 100%
+}
+
+
+.line .crosshair {
+      fill: none;
+      stroke-width: 1px;
+    }
+.line #crosshairX {
+      stroke: red;
+    }
+.line #crosshairY {
+  stroke: blue;
+    }
+.overlay {
+      fill: none;
+      stroke: black;
+      pointer-events: all;
+      stroke-width: 2px;
+    }

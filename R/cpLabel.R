@@ -58,7 +58,9 @@ cpLabel <- function(data){
       })
 
       output$selected <- renderText({
-             input$data_sent
+
+            labels <- input$data_sent
+            print(labels)
       })
 
     }

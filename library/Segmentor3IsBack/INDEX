@@ -1,0 +1,34 @@
+BestSegmentation        BestSegmentation
+Segmentor               Segmentor
+Segmentor-class         Class "Segmentor"
+Segmentor3IsBack-package
+                        Implementation of the Pruned Dynamic
+                        Programming Algorithm for the exact optimal
+                        segmentation of profiles
+SelectModel             SelectModel
+getBreaks               Generic function
+getBreaks-methods       ~~ Methods for Function 'getBreaks' ~~
+getCompression          Generic function
+getCompression-methods
+                        ~~ Methods for Function 'getCompression' ~~
+getCost                 Generic function
+getCost-methods         ~~ Methods for Function 'getCost' ~~
+getData                 Generic function
+getData-methods         ~~ Methods for Function 'getData' ~~
+getKmax                 Generic function
+getKmax-methods         ~~ Methods for Function 'getKmax' ~~
+getLikelihood           Generic function
+getLikelihood-methods   ~~ Methods for Function 'getLikelihood' ~~
+getMean                 Generic function
+getMean-methods         ~~ Methods for Function 'getMean' ~~
+getModel                Generic function
+getModel-methods        ~~ Methods for Function 'getModel' ~~
+getOverdispersion       Generic function
+getOverdispersion-methods
+                        ~~ Methods for Function 'getOverdispersion' ~~
+getParameters           Generic function
+getParameters-methods   ~~ Methods for Function 'getParameters' ~~
+getPos                  Generic function
+getPos-methods          ~~ Methods for Function 'getPos' ~~
+show-methods            ~~ Methods for Function 'show' in Package
+                        'methods' ~~

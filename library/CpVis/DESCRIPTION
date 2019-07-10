@@ -1,0 +1,21 @@
+Package: CpVis
+Title: Interactive Visualization for Change Point Exploration and
+        Labeling
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Oliver",
+           family = "Ford",
+           role = c("aut", "cre"),
+           email = "first.last@example.com",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: What the package does (one paragraph).
+License: GPL
+Encoding: UTF-8
+LazyData: true
+Suggests: testthat (>= 2.1.0), knitr, rmarkdown
+RoxygenNote: 6.1.1
+Imports: shiny, changepoint, r2d3, jsonlite, htmlwidgets
+VignetteBuilder: knitr
+Author: Oliver Ford [aut, cre] (<https://orcid.org/YOUR-ORCID-ID>)
+Maintainer: Oliver Ford <first.last@example.com>
+Built: R 3.6.0; ; 2019-07-10 11:26:38 UTC; unix

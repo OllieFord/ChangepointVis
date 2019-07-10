@@ -1,0 +1,47 @@
+GeomTallRect            GeomTallRect
+IntervalRegressionCV    IntervalRegressionCV
+IntervalRegressionCVmargin
+                        IntervalRegressionCVmargin
+IntervalRegressionInternal
+                        IntervalRegressionInternal
+IntervalRegressionRegularized
+                        IntervalRegressionRegularized
+IntervalRegressionUnregularized
+                        IntervalRegressionUnregularized
+ROChange                ROC curve for changepoints
+change.colors           change colors
+change.labels           change labels
+changeLabel             changeLabel
+check_features_targets
+                        check features targets
+check_target_pred       check target pred
+coef.IntervalRegression
+                        coef IntervalRegression
+demo8                   PeakSegFPOP demo data set
+featureMatrix           featureMatrix
+featureVector           featureVector
+geom_tallrect           geom tallrect
+labelError              Compute incorrect labels
+largestContinuousMinimumC
+                        largestContinuousMinimumC
+largestContinuousMinimumR
+                        largestContinuousMinimumR
+modelSelection          Compute exact model selection function
+modelSelectionC         Exact model selection function
+modelSelectionR         Exact model selection function
+neuroblastomaProcessed
+                        Processed neuroblastoma data set with features
+                        and targets
+oneSkip                 oneSkip
+plot.IntervalRegression
+                        plot IntervalRegression
+predict.IntervalRegression
+                        predict IntervalRegression
+print.IntervalRegression
+                        print IntervalRegression
+squared.hinge           squared hinge
+targetIntervalROC       targetIntervalROC
+targetIntervalResidual
+                        targetIntervalResidual
+targetIntervals         Compute target intervals
+theme_no_space          theme no space

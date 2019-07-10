@@ -1,0 +1,18 @@
+Package: Segmentor3IsBack
+Version: 2.0
+Date: 2016-06-25
+Title: A Fast Segmentation Algorithm
+Author: Alice Cleynen, Guillem Rigaill, Michel Koskas
+Maintainer: Alice Cleynen <alice.cleynen@umontpellier.fr>
+Description: Performs a fast exact segmentation on data and allows for use of various cost functions.
+License: GPL (>= 2)
+Depends: R (>= 2.0.0), methods
+Packaged: 2016-06-22 13:25:20 UTC; rforge
+Repository: CRAN
+Repository/R-Forge/Project: segmentor3isbac
+Repository/R-Forge/Revision: 31
+Repository/R-Forge/DateTimeStamp: 2016-06-22 13:18:27
+Date/Publication: 2016-06-30 09:17:38
+NeedsCompilation: yes
+Built: R 3.6.0; x86_64-apple-darwin15.6.0; 2019-04-26 20:05:47 UTC; unix
+Archs: Segmentor3IsBack.so.dSYM
