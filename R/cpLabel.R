@@ -28,7 +28,7 @@ cpLabel <- function(data){
       tags$head(includeCSS(system.file('WWW', 'main.css', package = 'CpVis'))),
 
       titlePanel("Change Point Labeling"),
-      verbatimTextOutput("selected"),
+      tableOutput("selected"),
       tags$div(class = "row justify-content-md-left",
                tags$div(class = "col-lg-10",
                         tags$div(id = "main_output", d3Output("main_data"))),
@@ -57,10 +57,16 @@ cpLabel <- function(data){
         r2d3(data=json, script = system.file("JS/univariate_label.js", package = "CpVis"), d3_version = 4, container = "div")
       })
 
-      output$selected <- renderText({
 
-            labels <- input$data_sent
-            print(labels)
+
+      output$selected <- renderTable({
+
+        if (is.null(input$data_sent)) {
+        } else {
+          labels <- fromJSON(input$data_sent)
+          return(labels)
+        }
+
       })
 
     }
