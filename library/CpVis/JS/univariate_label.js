@@ -3,9 +3,7 @@
 // r2d3: https://rstudio.github.io/r2d3
 //
 var data = r2d3.data;
-var labels = new Array(data.data_set.length).fill(0);
-
-//console.log(labels);
+var labels = new Array(data.data_set.length).fill('normal');
 
 const accent_colour = "#4363d8"; //blue
 const base_colour = "#c5c5c5"; //Grey
@@ -95,6 +93,10 @@ focus.append("text")
 
 function updateChart() {
 
+      var annotations = [];
+      var positions = [];
+      var min = [];
+      var max = [];
       var form = document.getElementById("label-type");
       var form_val;
     	for(var i=0; i<form.length; i++){
@@ -106,24 +108,16 @@ function updateChart() {
     extent = d3.event.selection;
     var range = d3.extent(extent, function(d) { return Math.round(label_scale(d)) });
     for (i = range[0] ; i< range[1]; i++){
-        labels[i] = parseInt(form_val);
+        labels[i] = form_val;
     }
 
-    console.log(labels);
+    //console.log(labels);
     focus.selectAll(".class_rect").remove();
     focus.selectAll(".overlay").remove();
     focus.selectAll(".selection").remove();
     focus.selectAll(".handle").remove();
 
-/*
-      var ranges = [];
-      for (i = 0; i < labels.length; i++) {
-      if(labels[i] != labels[i+1]) {
-      ranges.push(labels[i])
-      }
-      }
-      console.log(labels.length);
-*/
+    r_data = annotationData(labels, annotations, min, max, positions);
 
     focus.selectAll("bar")
       .data(labels)
@@ -135,9 +129,9 @@ function updateChart() {
       .attr("height", (height - (height_padding * 2)))
       .attr("width", (width-width_padding) / data.data_set.length)
       .attr("fill", function(d) {
-        if(d === 0) { return "#ffffff"}
-        if(d === 1) {return colour_1}
-        if(d === 2) {return colour_4}
+        if(d === "normal") { return "#ffffff"}
+        if(d === "multiple_breakpoints") {return colour_1}
+        if(d === "breakpoint") {return colour_4}
       })
       .style("opacity", "0.2")
       .style("stroke", "none");
@@ -148,12 +142,40 @@ function updateChart() {
 
 }
 
-const button = d3.select(".send_data")
+var button = d3.select(".send_data")
               .on("click", function(){
-                //console.log("Data sent: " + labels);
+                //console.log(JSON.stringify(r_data));
                   Shiny.setInputValue(
                     "data_sent",
-                    labels,
+                    JSON.stringify(r_data),
                     {priority: "event"}
                     )});
 
+function annotationData(labels, annotations, min, max, positions) {
+      for (i = 0; i < labels.length; i++) {
+        if(labels[i] != labels[i+1]) {
+          annotations.push(labels[i])
+          positions.push(i)
+          }
+      }
+
+      for (i = 0; i < positions.length; i++) {
+        if (i === 0){
+          min[i] = 0
+          max[i] = positions[i]
+        }
+        else {
+          min[i] = (positions[i-1] + 1)
+          max[i] = positions[i]
+        }
+      }
+
+      tmp_data = []
+      for (i = 0; i < annotations.length; i++) {
+        var tmp = {data:1, id:1, min:min[i], max:max[i], annotation:annotations[i] };
+        console.log(tmp)
+        tmp_data.push(tmp);
+      }
+      return tmp_data
+
+}

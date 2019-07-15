@@ -3,7 +3,7 @@
 // r2d3: https://rstudio.github.io/r2d3
 //
 var data = r2d3.data;
-var labels = new Array(data.data_set.length).fill(0);
+var labels = new Array(data.data_set.length).fill('normal');
 
 const accent_colour = "#4363d8"; //blue
 const base_colour = "#c5c5c5"; //Grey
@@ -108,7 +108,7 @@ function updateChart() {
     extent = d3.event.selection;
     var range = d3.extent(extent, function(d) { return Math.round(label_scale(d)) });
     for (i = range[0] ; i< range[1]; i++){
-        labels[i] = parseInt(form_val);
+        labels[i] = form_val;
     }
 
     //console.log(labels);
@@ -129,9 +129,9 @@ function updateChart() {
       .attr("height", (height - (height_padding * 2)))
       .attr("width", (width-width_padding) / data.data_set.length)
       .attr("fill", function(d) {
-        if(d === 0) { return "#ffffff"}
-        if(d === 1) {return colour_1}
-        if(d === 2) {return colour_4}
+        if(d === "normal") { return "#ffffff"}
+        if(d === "multiple_breakpoints") {return colour_1}
+        if(d === "breakpoint") {return colour_4}
       })
       .style("opacity", "0.2")
       .style("stroke", "none");
