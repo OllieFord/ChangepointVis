@@ -21,5 +21,7 @@ Imports:
     changepoint,
     r2d3,
     jsonlite,
-    htmlwidgets
+    htmlwidgets, 
+    penaltyLearning,
+    data.table
 VignetteBuilder: knitr

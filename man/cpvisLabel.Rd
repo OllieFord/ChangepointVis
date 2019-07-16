@@ -20,4 +20,5 @@ This function takes a univariate dataset as input. Provides simple labeling and 
 data = c(rnorm(100,0,1),rnorm(100,5,1))
 cpLabel(data)
 
+
 }

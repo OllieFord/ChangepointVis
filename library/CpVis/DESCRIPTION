@@ -18,4 +18,4 @@ Imports: shiny, changepoint, r2d3, jsonlite, htmlwidgets
 VignetteBuilder: knitr
 Author: Oliver Ford [aut, cre] (<https://orcid.org/YOUR-ORCID-ID>)
 Maintainer: Oliver Ford <first.last@example.com>
-Built: R 3.6.0; ; 2019-07-15 17:44:18 UTC; unix
+Built: R 3.6.0; ; 2019-07-16 18:12:16 UTC; unix

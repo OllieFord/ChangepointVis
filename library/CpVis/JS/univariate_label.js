@@ -172,7 +172,7 @@ function annotationData(labels, annotations, min, max, positions) {
 
       tmp_data = []
       for (i = 0; i < annotations.length; i++) {
-        var tmp = {data:1, id:1, min:min[i], max:max[i], annotation:annotations[i] };
+        var tmp = {id:1, subset:1, min:min[i], max:max[i], annotation:annotations[i] };
         console.log(tmp)
         tmp_data.push(tmp);
       }
