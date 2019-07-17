@@ -21,7 +21,10 @@ Imports:
     changepoint,
     r2d3,
     jsonlite,
-    htmlwidgets, 
-    penaltyLearning,
-    data.table
+    htmlwidgets,
+    future,
+  Segmentor3IsBack,
+  directlabels,
+  data.table,
+  penaltyLearning
 VignetteBuilder: knitr

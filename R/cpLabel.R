@@ -20,16 +20,17 @@
 
 cpLabel <- function(data){
   require(shiny)
-  require(changepoint)
   require(r2d3)
   require(jsonlite)
   require(htmlwidgets)
   require(shinyjs)
-  require(penaltyLearning)
+  require(survival)
+  require(Segmentor3IsBack)
+  require(changepoint)
+  require(directlabels)
   require(data.table)
-  library(penaltyLearning)
-  library(data.table)
-  library(tidyverse)
+  require(penaltyLearning)
+
 
   shinyApp(
     ui <- fluidPage(
@@ -45,7 +46,6 @@ cpLabel <- function(data){
                                  tags$div(id = "control",
                                  HTML("<form id='label-type'>
                                         <label class='block'> <div class='small-box zero'></div> <input type='radio' id='normal' name='mode' checked></input> <span class='select'>   No label</span> </label>
-                                        <label class='block'> <div class='small-box one'></div> <input type='radio' id='multiple_breakpoints' name='mode'></input> <span class='select' >    Changepoint Region</span></label>
                                         <label class='block'><div class='small-box two'></div> <input type='radio' id='breakpoint' name='mode'></input> <span class='select' >   Single Changepoint</span></label>
                                         </form>")),
                                  tags$div(id="run",
@@ -112,40 +112,19 @@ cpLabel <- function(data){
           }
 
           (cpstore.segs <- do.call(rbind, cpstore.segs.list))
-          cpstore.segs <- cpstore.segs[!duplicated(cpstore.segs), ]
-
-          # print(start)
-          # print(n.segments)
-          # print(rawStart)
-
-          print(cpstore.segs)
-          print(cpstore.segs[start > 1, ])
-          print(cpstore.segs[1 < start, c("id", "subset", "n.segments", "rawStart")])
-          print(cpstore.segs[start > 1, ])
-          blob <- cpstore.segs[1 < start, ]
-          print(blob)
+          (cpstore.segs <- cpstore.segs[!duplicated(cpstore.segs), ])
 
 
-          #(cpstore.changes <- cpstore.segs[1 < start, c("id", "subset", "n.segments", "rawStart")])
-
-          (cpstore.changes <- cpstore.segs[1 < start, data.table(
-            subset = 1,id=1, n.segments)])
-
-
+          (cpstore.changes <- cpstore.segs[1 < cpstore.segs$start,c("id", "subset", "n.segments", "rawStart")])
           cpstore.models <- data.table(
             id=1, subset=1,
             loss=cpstore.loss.vec,
             n.segments=as.numeric(1:max.segments))
 
 
+          #convert to integers
           cpstore.changes$id <- as.integer(cpstore.changes$id)
-
           cpstore.changes$subset <- as.integer(cpstore.changes$subset)
-
-
-          print(cpstore.changes)
-          print(cpstore.labels)
-          print(cpstore.models)
 
           cpstore.error.list <- penaltyLearning::labelError(
             cpstore.models,
@@ -154,12 +133,11 @@ cpLabel <- function(data){
             change.var="rawStart",
             problem.vars=c("id", "subset"))
 
-
           (cpstore.selection <- penaltyLearning::modelSelection(
             cpstore.models, complexity="n.segments"))
 
-          cpstore.error.join <- cpstore.error.list$model.errors[J(cpstore.selection), on=list(
-            id, subset, n.segments, loss)]
+
+          cpstore.error.join <- merge(cpstore.selection,cpstore.error.list$model.errors,by=c("id","subset", "n.segments", "loss"))
 
           cpstore.errors.tall <- data.table::melt(
             cpstore.error.join,
@@ -170,8 +148,30 @@ cpLabel <- function(data){
             problem.vars=c("id", "subset")))
 
 
+          minErrors <- which(cpstore.error.join$errors == min(cpstore.error.join$errors))
+          if (length(minErrors) > 1) {
+            segments <- c()
+            for  (error in minErrors) {
+              predictedSegments <- cpstore.error.join$n.segments[error]
+              segments <- c(segments, predictedSegments)
+            }
+            predictedSegments <- min(segments)
+          } else {
+            predictedSegments <- cpstore.error.join$n.segments[minErrors]
+          }
 
-          print(cpstore.target)
+
+          #minError <- which(grepl(cpstore.error.join$errors, cpstore.selection$min.log.lambda))
+
+
+          #targetIndex <- which(grepl(cpstore.target$min.log.lambda, cpstore.selection$min.log.lambda))
+          #predictedSegments <- cpstore.selection[location,]$n.segments
+          predictedChangeLocations <- cpstore.changes[cpstore.changes$n.segments == predictedSegments,]$rawStart
+
+
+
+          #print(cpstore.errors.tall)
+          print(predictedChangeLocations)
         }
 
       })
