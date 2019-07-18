@@ -36,8 +36,7 @@ cpLabel <- function(data){
     ui <- fluidPage(
       tags$head(includeCSS(system.file('WWW', 'main.css', package = 'CpVis'))),
 
-      titlePanel("Change Point Labeling"),
-      tableOutput("selected"),
+      tags$h3("CPLabel"),
       tags$div(class = "row justify-content-md-left",
                tags$div(class = "col-lg-10",
                         tags$div(id = "main_output", d3Output("main_data"))),
@@ -46,10 +45,29 @@ cpLabel <- function(data){
                                  tags$div(id = "control",
                                  HTML("<form id='label-type'>
                                         <label class='block'> <div class='small-box zero'></div> <input type='radio' id='normal' name='mode' checked></input> <span class='select'>   No label</span> </label>
-                                        <label class='block'><div class='small-box two'></div> <input type='radio' id='breakpoint' name='mode'></input> <span class='select' >   Single Changepoint</span></label>
-                                        </form>")),
+                                        <label class='block'><div class='small-box two'></div> <input type='radio' id='breakpoint' name='mode'></input> <span class='select' >   Changepoint Region</span></label>
+                                        </form>"),
+                                 tags$div(id="segments", HTML("<div class='form-group'>
+                                                                        <label for='exampleFormControlSelect1'>Number of Segments</label>
+                                                                        <select class='form-control' id='segmentselect'>
+                                                                          <option>2</option>
+                                                                          <option>3</option>
+                                                                          <option>4</option>
+                                                                          <option>5</option>
+                                                                          <option>6</option>
+                                                                          <option>7</option>
+                                                                          <option>8</option>
+                                                                          <option>9</option>
+                                                                          <option>10</option>
+                                                                          <option>11</option>
+                                                                          <option>12</option>
+                                                                          <option>13</option>
+                                                                          <option>14</option>
+                                                                          <option>15</option>
+                                                                        </select>
+                                                                      </div>")),
                                  tags$div(id="run",
-                                          HTML("<button type='button' class='btn btn-primary send_data'>Learn Penalties</button>"))
+                                          HTML("<button type='button' class='btn btn-primary send_data'>Learn Penalties</button>")))
 
                                  )
                         )
@@ -57,17 +75,18 @@ cpLabel <- function(data){
 
     server <- function(input, output, session) {
       # convert the data to json
-      json <- jsonlite::toJSON(c(data_set = list(data)), pretty = TRUE)
+      json <- jsonlite::toJSON(c(data_set = list(data),  predictions = list("NULL")), pretty = TRUE)
 
-      #print(json)
+      # print(json)
       #output/send to client
-      output$main_data <- renderD3({
-        r2d3(data=json, script = system.file("JS/univariate_label.js", package = "CpVis"), d3_version = 4, container = "div")
-      })
 
-      output$selected <- renderTable({
+
+      output$main_data <- renderD3({
+
 
         if (is.null(input$data_sent)) {
+          r2d3(data=json, script = system.file("JS/univariate_label.js", package = "CpVis"), d3_version = 4, container = "div")
+
         } else {
 
           labels <- fromJSON(input$data_sent)
@@ -76,7 +95,10 @@ cpLabel <- function(data){
           save(labels,file="labels.Rda")
 
           # segment the data into n models
-          max.segments <- 7
+          max.segments <- 2
+          if (length(input$segmentnumber) > 0) {
+            max.segments <- as.integer(input$segmentnumber)
+          }
           (fit <- Segmentor3IsBack::Segmentor(data, model=2, Kmax=max.segments))
 
           data_store <- data.frame( id = rep(1, length(data)),
@@ -149,6 +171,7 @@ cpLabel <- function(data){
 
 
           minErrors <- which(cpstore.error.join$errors == min(cpstore.error.join$errors))
+
           if (length(minErrors) > 1) {
             segments <- c()
             for  (error in minErrors) {
@@ -160,18 +183,16 @@ cpLabel <- function(data){
             predictedSegments <- cpstore.error.join$n.segments[minErrors]
           }
 
-
-          #minError <- which(grepl(cpstore.error.join$errors, cpstore.selection$min.log.lambda))
-
-
-          #targetIndex <- which(grepl(cpstore.target$min.log.lambda, cpstore.selection$min.log.lambda))
-          #predictedSegments <- cpstore.selection[location,]$n.segments
+          targetIndex <- which(grepl(cpstore.target$min.log.lambda, cpstore.selection$min.log.lambda))
+          predictedSegments <- cpstore.selection[targetIndex,]$n.segments
           predictedChangeLocations <- cpstore.changes[cpstore.changes$n.segments == predictedSegments,]$rawStart
 
 
+          #predictedChangeLocations <- cpstore.changes[cpstore.changes$n.segments == predictedSegments,]$rawStart
 
-          #print(cpstore.errors.tall)
-          print(predictedChangeLocations)
+          predictedChange <- jsonlite::toJSON(c(data_set = list(data), predictions = list(predictedChangeLocations)), pretty = TRUE)
+          r2d3(data=predictedChange, script = system.file("JS/univariate_label.js", package = "CpVis"), d3_version = 4, container = "div")
+
         }
 
       })

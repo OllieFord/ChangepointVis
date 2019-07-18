@@ -35,13 +35,19 @@ var label_scale = d3.scaleLinear().domain([width_padding,width-width_padding]).r
 var xAxis = d3.axisBottom(x),
     yAxis = d3.axisLeft(y);
 
-div.style("height", "100%");
+div.style("height", "90%");
+
+var div = div.style("background", "none");
 
 var main_plot = div
   .append("svg")
   .attr("class", "main")
   .style("width", "100%")
-  .style("height", "100%");
+  .style("height", "100%")
+  .style("border-radius", "4px")
+  .style("box-shadow", "0px 18px 40px -12px rgba(196,196,196,0.35)")
+  .style("background", "#ffffff")
+  .style("margin", "10px");
 
 var focus = main_plot.append("g")
     .attr("class", "focus")
@@ -65,30 +71,6 @@ focus.call( d3.brushX()
         .extent( [ [width_padding, height_padding], [width-width_padding, height - height_padding] ] )
         .on("end", updateChart)
       );
-
-focus.append("g")
-      .attr("class", "axis axis--x")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
-
-focus.append("text")
-      .attr("transform", "translate(" + (width/2) + " ," + (height + margin.top + 5) + ")")
-      .style("text-anchor", "middle")
-      .attr("font-size", "2rem")
-      .text("Time");
-
-focus.append("g")
-      .attr("class", "axis axis--y")
-      .call(yAxis);
-
-focus.append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 0- margin.left/18)
-      .attr("x",0 - (height / 2))
-      .attr("dy", "1em")
-      .style("text-anchor", "middle")
-      .attr("font-size", "2rem")
-      .text("Value");
 
 
 function updateChart() {
@@ -151,6 +133,15 @@ var button = d3.select(".send_data")
                     {priority: "event"}
                     )});
 
+var dropdown = d3.select("#segmentselect")
+              .on("change", function(){
+                //console.log(d3.select(this).property("value"));
+                  Shiny.setInputValue(
+                    "segmentnumber",
+                    d3.select(this).property("value"),
+                    {priority: "event"}
+                    )});
+
 function annotationData(labels, annotations, min, max, positions) {
       for (i = 0; i < labels.length; i++) {
         if(labels[i] != labels[i+1]) {
@@ -173,9 +164,60 @@ function annotationData(labels, annotations, min, max, positions) {
       tmp_data = []
       for (i = 0; i < annotations.length; i++) {
         var tmp = {id:1, subset:1, min:min[i], max:max[i], annotation:annotations[i] };
-        console.log(tmp)
+        //console.log(tmp)
         tmp_data.push(tmp);
       }
       return tmp_data
-
 }
+
+r2d3.onRender(function(data) {
+
+  if (data.predictions[0] === "NULL") {
+
+  } else {
+  focus.selectAll(".predictedChangepoints").remove();
+
+
+  focus.selectAll("bar")
+      .data(data.predictions)
+      .enter()
+      .append("rect")
+      .attr("class", "predictedChangepoints")
+      .transition()
+      .duration(300)
+      .attr("x", function(d) { return x(d) })
+      .attr("y", height_padding)
+      .attr("height", (height - (height_padding * 2)))
+      .attr("width", 2)
+      .attr("fill", "#000000")
+      .style("opacity", "1")
+      .style("stroke", "none");
+  }
+
+})
+
+focus.append("g")
+      .attr("class", "axis axis--x")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+focus.append("text")
+      .attr("transform", "translate(" + (width/2) + " ," + (height + margin.top + 5) + ")")
+      .style("text-anchor", "middle")
+      .attr("font-size", "2rem")
+      .text("Time")
+      .style("color", "#000000");
+
+focus.append("g")
+      .attr("class", "axis axis--y")
+      .call(yAxis);
+
+focus.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0- margin.left/18)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .attr("font-size", "2rem")
+      .text("Value")
+      .style("color", "#000000");

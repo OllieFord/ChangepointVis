@@ -1,12 +1,21 @@
+body {
+  background-color: #efefef;
+}
+
 .axis {
   font: 10px sans-serif;
 }
-h2 {
-  text-align: center;
+h3 {
+  text-align: left;
+  margin-left: 10px;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  opacity: 0.75;
+
 }
-.line {
-  fill: steelblue; clip-path: url(#clip);
-}
+
+
+
 .block {
   display: block;
 }
@@ -35,7 +44,9 @@ input {
 }
 
 #run {
-  height: 80px;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
   width: 100%;
 }
 
@@ -85,6 +96,14 @@ label {
 
 .block input:checked ~ .select {
   background-color: #E3F2FD;
+}
+
+#control {
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0px 18px 40px -12px rgba(196,196,196,0.35);
+  background: #ffffff;
+  margin: 10px;
 }
 
 
