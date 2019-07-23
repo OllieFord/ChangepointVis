@@ -34,7 +34,7 @@ cpLabel <- function(data){
 
   shinyApp(
     ui <- fluidPage(
-      tags$head(includeCSS(system.file('WWW', 'main.css', package = 'CpVis'))),
+      tags$head(includeCSS(system.file('WWW', 'labelStyle.css', package = 'CpVis'))),
 
       tags$h3("CPLabel"),
       tags$div(class = "row justify-content-md-left",
