@@ -8,6 +8,7 @@ Authors@R:
            email = "first.last@example.com",
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: What the package does (one paragraph).
+Depends: R (>= 3.5.0)
 License: GPL
 Encoding: UTF-8
 LazyData: true
@@ -23,8 +24,8 @@ Imports:
     jsonlite,
     htmlwidgets,
     future,
-  Segmentor3IsBack,
-  directlabels,
-  data.table,
-  penaltyLearning
+    Segmentor3IsBack,
+    directlabels,
+    data.table,
+    penaltyLearning
 VignetteBuilder: knitr
