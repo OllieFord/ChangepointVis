@@ -16,8 +16,6 @@
 #'
 #'
 
-
-
 cpLabel <- function(data){
   require(shiny)
   require(r2d3)

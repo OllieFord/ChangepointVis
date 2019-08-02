@@ -20,10 +20,12 @@ var height = parentDiv.clientHeight - margin.top - margin.bottom;
 var widthPadding = 20;
 var heightPadding = 20;
 
-const x = d3.scaleLinear().range([0 + widthPadding, width - widthPadding]).nice(),
-    y = d3.scaleLinear().range([height - heightPadding, 0 + heightPadding]).nice(),
-    labelScale = d3.scaleLinear().domain([widthPadding, width - widthPadding]).range([0, data.data_set.length]),
-    z = d3.scaleLinear().domain([0, data.data_set.length]).range([0 + widthPadding, width - widthPadding]).nice();
+const x = d3.scaleLinear().range([(0 + widthPadding), (width - widthPadding)]).nice(),
+      y = d3.scaleLinear().range([height - heightPadding, (0 + heightPadding)]).nice(),
+      labelScale = d3.scaleLinear().domain([widthPadding, width - widthPadding]).range([0, data.data_set.length]),
+      z = d3.scaleLinear().domain([0, data.data_set.length]).range([widthPadding, (width - widthPadding)]);
+
+console.log(x);
 
 const xAxis = d3.axisBottom(x),
     yAxis = d3.axisLeft(y);
@@ -75,8 +77,8 @@ function updateChart() {
       var formValue;
 
     labelSelection();
-
-    var range = d3.extent(d3.event.selection, function(d) { return Math.round(labelScale(d)) });
+    extent = d3.event.selection;
+    var range = d3.extent(extent, function(d) { return Math.round(labelScale(d)) });
     // update label storage
     for (let i = range[0] ; i< range[1]; i++){
         labels[i] = formValue;
@@ -85,9 +87,9 @@ function updateChart() {
     breakpointLabelRanges();
 
     breakpointNestedLabels = convertNestedPairs();
-
-    //console.log(breakpointRanges);
-    //console.log(breakpointNestedLabels);
+    console.log(range);
+    console.log(breakpointRanges);
+    console.log(breakpointNestedLabels);
     dataVisualisation.selectAll(".class_rect").remove();
     dataVisualisation.selectAll(".overlay").remove();
     dataVisualisation.selectAll(".selection").remove();
@@ -103,7 +105,7 @@ function updateChart() {
       .attr("x", function(d) { return x(d[0]) })
       .attr("y", heightPadding)
       .attr("height", (height - (heightPadding * 2)))
-      .attr("width", function(d) { return z( (d[1]-d[0] - 2))}) // magic 2 until i figure out the issue - will not work for other data.
+      .attr("width", function(d) { return z(Math.abs(d[1] - d[0]))}) // magic 2 until i figure out the issue - will not work for other data.
       .attr("fill", red)
       .style("opacity", "0.2")
       .style("stroke", "none");
@@ -133,7 +135,7 @@ function updateChart() {
               flipFlop = false;
             }
             if (labels[i] != labels[(i+1)] && flipFlop === false) {
-              breakpointRanges.push(i);
+              breakpointRanges.push((i+1));
               flipFlop = true;
             }
         }

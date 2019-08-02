@@ -32,7 +32,6 @@ cpVisualise <- function(data, penalty_range = c(1e-5,10)){
   require(r2d3)
   require(jsonlite)
   require(htmlwidgets)
-  require(shinyjs)
 
     shinyApp(
         ui <- fluidPage(

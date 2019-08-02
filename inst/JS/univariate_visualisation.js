@@ -14,7 +14,7 @@ const secondary_colour = "#f58231"; //orange
 // data manipulation on startup -(these are quality of life changes)
 
 var changepoint_lengths = [];
-for (i = 0; i < data.cpts_full.length; i++) {
+for (let i = 0; i < data.cpts_full.length; i++) {
   changepoint_lengths.push(data.cpts_full[i].length);
 }
 
@@ -22,9 +22,9 @@ for (i = 0; i < data.cpts_full.length; i++) {
 
 // new cpts_full data  (to, changed to index at zero)
 all_changepoints = [];
-for (i = 0; i < data.cpts_full.length; i++) {
+for (let i = 0; i < data.cpts_full.length; i++) {
   var change_locations = [];
-  for (j = 0; j < data.cpts_full[i].length; j++) {
+  for (let j = 0; j < data.cpts_full[i].length; j++) {
     change_locations.push(data.cpts_full[i][j] - 1);
   }
   if (change_locations[0] !== 0) {
@@ -36,8 +36,8 @@ for (i = 0; i < data.cpts_full.length; i++) {
 
 // compute count of all changepoints
 var counts = {};
-for (var i = 0; i < all_changepoints.length; i++) {
-  for(var j=0; j< all_changepoints[i].length; j++){
+for (let i = 0; i < all_changepoints.length; i++) {
+  for(let j=0; j< all_changepoints[i].length; j++){
     var num = all_changepoints[i][j];
     counts[num] = counts[num] ? counts[num] + 1 : 1;
   }
@@ -48,7 +48,7 @@ var counts_values = d3.values(counts);
 //var scaled_counts = counts_values.map(function(x) x * d3.max(counts_values));
 
 var hist_data = [];
-for (i = 0; i < counts_values.length; i++) {
+for (let i = 0; i < counts_values.length; i++) {
   var tmp = {loc:counts_keys[i], count:counts_values[i] };
   hist_data.push(tmp);
 }
@@ -431,8 +431,6 @@ solution_plot.selectAll("circle")
       			 for (i = 0; i< means.length; i++){
       			   main_plot.append("line")
       			          .attr("class", "pc-means")
-      			          .transition()
-      			          .duration(300)
       			          .attr("x1", mainXScale(filtered_change_location[i]))
       			          .attr("y1", mainYScale(means[i]))
       			          .attr("x2", mainXScale(filtered_change_location[i+1]))
