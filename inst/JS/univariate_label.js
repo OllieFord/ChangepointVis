@@ -25,7 +25,7 @@ const x = d3.scaleLinear().range([(0 + widthPadding), (width - widthPadding)]).n
       labelScale = d3.scaleLinear().domain([widthPadding, width - widthPadding]).range([0, data.data_set.length]),
       z = d3.scaleLinear().domain([0, data.data_set.length]).range([widthPadding, (width - widthPadding)]);
 
-console.log(x);
+//console.log(x);
 
 const xAxis = d3.axisBottom(x),
     yAxis = d3.axisLeft(y);
@@ -87,9 +87,9 @@ function updateChart() {
     breakpointLabelRanges();
 
     breakpointNestedLabels = convertNestedPairs();
-    console.log(range);
-    console.log(breakpointRanges);
-    console.log(breakpointNestedLabels);
+    //console.log(range);
+    //console.log(breakpointRanges);
+    //console.log(breakpointNestedLabels);
     dataVisualisation.selectAll(".class_rect").remove();
     dataVisualisation.selectAll(".overlay").remove();
     dataVisualisation.selectAll(".selection").remove();

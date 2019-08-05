@@ -2,33 +2,39 @@
 #'
 #' This function takes a univariate dataset as input. Provides simple labeling and exporting functionality for univariate time seriese data.
 #'
-#' @name cpvisLabel
+#' @name cpLabel
 #'
 #' @param data A univariate dataset
 #'
+#' @usage cpLabel(data)
+#'
+#' @import shiny
+#' @import r2d3
+#' @import htmlwidgets
+#' @import survival
+#' @import directlabels
+#' @import data.table
+#' @import penaltyLearning
+#' @importFrom jsonlite toJSON fromJSON
+#' @importFrom Segmentor3IsBack Segmentor
+#' @importFrom utils globalVariables
+#'
 #'
 #' @return starts a shiny app in a new window
-#' @export
+#'
 #'
 #' @examples
+#' \dontrun{
 #' data = c(rnorm(100,0,1),rnorm(100,5,1))
 #' cpLabel(data)
+#' }
 #'
 #'
+#' @export cpLabel
 
 cpLabel <- function(data){
-  require(shiny)
-  require(r2d3)
-  require(jsonlite)
-  require(htmlwidgets)
-  require(shinyjs)
-  require(survival)
-  require(Segmentor3IsBack)
-  require(changepoint)
-  require(directlabels)
-  require(data.table)
-  require(penaltyLearning)
 
+  #assign("cpstore.labels", data.frame(), envir = .GlobalEnv)
 
   shinyApp(
     ui <- fluidPage(
@@ -75,10 +81,10 @@ cpLabel <- function(data){
       # convert the data to json
       json <- jsonlite::toJSON(c(data_set = list(data),  predictions = list("NULL")), pretty = TRUE)
 
-      # print(json)
+
+      cpstore.labels <- "data"
+
       #output/send to client
-
-
       output$main_data <- renderD3({
 
 
@@ -90,7 +96,10 @@ cpLabel <- function(data){
           labels <- fromJSON(input$data_sent)
 
           cpstore.labels <<- labels
-          save(labels,file="labels.Rda")
+          #assign("cpstore.labels", labels, envir = .GlobalEnv)
+
+         # cpstore.labels <<-
+          #save(labels,file="labels.Rda")
 
           # segment the data into n models
           max.segments <- 2
@@ -192,6 +201,12 @@ cpLabel <- function(data){
           r2d3(data=predictedChange, script = system.file("JS/univariate_label.js", package = "CpVis"), d3_version = 4, container = "div")
 
         }
+
+      })
+
+      #for future use - to save labels to csv file, will probably make a button in interface to save results.
+      session$onSessionEnded(function() {
+        print(cpstore.labels)
 
       })
 

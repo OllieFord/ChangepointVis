@@ -18,20 +18,33 @@
 #' @param data A univariate dataset
 #' @param penalty_range A range of penalty values
 #'
+#'
+#' @usage cpVisualise(data, penalty_range)
+#'
+#'
+#' @import shiny
+#' @import r2d3
+#' @import htmlwidgets
+#' @importFrom changepoint cpt.mean
+#' @importFrom jsonlite toJSON fromJSON
+#' @importFrom stats var
+#' @importFrom utils stack
+#'
+#'
 #' @return starts a shiny app in a new window
-#' @export
+#'
 #'
 #' @examples
+#' \dontrun{
 #' data = c(rnorm(100,0,1),rnorm(100,5,1))
-#' cpVisualise(data, penalty_range = c(1e-5,10))
-#
+#' penalty_range = c(1e-5,10)
+#' cpVisualise(data, penalty_range)
+#' }
+#' @export cpVisualise
 
-cpVisualise <- function(data, penalty_range = c(1e-5,10)){
-  require(shiny)
-  require(changepoint)
-  require(r2d3)
-  require(jsonlite)
-  require(htmlwidgets)
+penalty_range = c(1e-5,10)
+
+cpVisualise <- function(data, penalty_range){
 
     shinyApp(
         ui <- fluidPage(
@@ -56,7 +69,7 @@ cpVisualise <- function(data, penalty_range = c(1e-5,10)){
         server <- function(input, output, session) {
 
           # run the change point method on the data - for differnet penalty values
-          data.crops = cpt.mean(data, method="PELT", penalty="CROPS", pen.value=penalty_range, class=FALSE)
+          data.crops = changepoint::cpt.mean(data, method="PELT", penalty="CROPS", pen.value=penalty_range, class=FALSE)
 
           # list of all changepoints for each tested penalty value
           all_changepoints <- data.crops[2]

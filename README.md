@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <img src="https://raw.githubusercontent.com/OllieFord/ChangepointVis/master/images/cpvisLogo.png" alt="cpVis" width="200">
+  <img src="https://raw.githubusercontent.com/OllieFord/ChangepointVis/master/inst/images/cpvisLogo.png" alt="cpVis" width="200">
   <br>
   Change Point Visualisation
   <br>
@@ -18,7 +18,7 @@
   <a href="#license">License</a>
 </p>
 
-![screenshot](https://raw.githubusercontent.com/OllieFord/ChangepointVis/master/images/demo.gif)
+![screenshot](https://raw.githubusercontent.com/OllieFord/ChangepointVis/master/inst/images/demo.gif)
 
 ## Key Features
 
