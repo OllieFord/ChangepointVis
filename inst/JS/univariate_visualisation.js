@@ -281,7 +281,13 @@ var pen_cost_max = d3.max(data.solution_path, function(d) { return +d.penalised_
 var radius_range = d3.scaleLinear()
                           .domain([pen_cost_min, pen_cost_max])
                           .range([2, 5]);
-
+var segments = [];
+var means = [];
+var weighted_mean = [];
+var filtered_change_location = [];
+var amplitude = 0.6;
+var KDEvalue = 2;
+var ticks = 40;
 
 solution_plot.selectAll("circle")
 			   .data(data.solution_path)
@@ -302,45 +308,22 @@ solution_plot.selectAll("circle")
 			     solution_plot.selectAll("#focus_circle").remove();
 			     main_plot.selectAll("#change_point").remove();
 			     main_plot.selectAll(".pc-means").remove();
-			     mean_hist.selectAll(".hist_update").remove();
+			     mean_hist.selectAll(".mean_hist_density").remove();
+			     mean_hist.selectAll(".mean_hist_bars").remove();
 			     mean_hist.selectAll(".hist_y_axis").remove();
 			     main_plot.selectAll(".changepoint_pacing").remove();
 			     main_plot.selectAll(".cross_rect").remove();
 
-			     var filtered_change_location = all_changepoints[changepoint_lengths.indexOf((d.numberofchangepoints -1))];
+			     filtered_change_location = all_changepoints[changepoint_lengths.indexOf((d.numberofchangepoints -1))];
 
           // split the data into segemnts
-			    var segments = [];
-			    for (i = 0; i < filtered_change_location.length-1; i++) {
-			      if (i > 0) {
-			        var chunk = data.data_set.slice(filtered_change_location[i]+1, filtered_change_location[i+1]+1);
-			      } else {
-			        var chunk = data.data_set.slice(filtered_change_location[i], filtered_change_location[i+1]+1);
-			      }
-                segments.push(chunk);
-              }
-
-          //console.log(JSON.stringify(data.data_set));
-
-          //console.log(JSON.stringify(segments));
+           segments = splitSegments(filtered_change_location);
 
           // calcualte the mean for each segment of the data
-          var means = [];
-          for (i = 0; i < segments.length; i++) {
-            var sum = 0;
-            for (var k = 0; k < segments[i].length; k++){
-              sum += parseFloat(segments[i][k]);
-            }
-            var avg = sum/segments[i].length;
-            means.push(avg);
-          }
+           means = calcSegMeans(segments);
 
-          var weighted_mean = [];
-          for (i = 0; i < segments.length; i++){
-            for (var k = 0; k < segments[i].length; k++){
-              weighted_mean.push(means[i])
-            }
-          }
+           // weigh means with wrt segment length
+           weighted_mean = weighMeans(means);
 
           //console.log(JSON.stringify(means));
 
@@ -470,11 +453,11 @@ solution_plot.selectAll("circle")
       			 }
 
       			 var n = weighted_mean.length,
-                 bins = d3.histogram().domain(mean_hist_x.domain()).thresholds(d3.thresholdSturges)(weighted_mean),
-                 density = kernelDensityEstimator(kernelEpanechnikov(2), mean_hist_x.ticks(40))(weighted_mean);
+              bins = d3.histogram().domain(mean_hist_x.domain()).thresholds(d3.thresholdSturges)(weighted_mean),
+              density = kernelDensityEstimator(kernelEpanechnikov(KDEvalue, amplitude), mean_hist_x.ticks(ticks))(weighted_mean);
             //console.log(d3.max(bins, function(d) { return d.length; }));
 
-            mean_hist_y.domain([0, (d3.max(bins, function(d) { return d.length; })/100)])
+            mean_hist_y.domain([0, (d3.max(bins, function(d) { return d.length; })/data.data_set.length)]).nice()
 
             mean_hist.append("g")
                     .attr("class", "axis hist_y_axis")
@@ -486,16 +469,17 @@ solution_plot.selectAll("circle")
               .selectAll("rect")
               .data(bins)
               .enter().append("rect")
-                .attr("class", "hist_update")
+                .attr("class", "mean_hist_bars")
                 .attr("x", function(d) { return mean_hist_x(d.x0) + 1; })
                 .attr("y", function(d) { return mean_hist_y(d.length / n); })
                 .attr("width", function(d) { return mean_hist_x(d.x1) - mean_hist_x(d.x0) - 1; })
                 .attr("height", function(d) { return mean_hist_y(0) - mean_hist_y(d.length / n); });
 
 
+            //update for path
             mean_hist.append("path")
                 .datum(density)
-                .attr("class", "hist_update")
+                .attr("class", "mean_hist_density")
                 .attr("fill", "none")
                 .attr("stroke", "#000")
                 .attr("stroke-width", 1.5)
@@ -572,11 +556,89 @@ function kernelDensityEstimator(kernel, X) {
   };
 }
 
-function kernelEpanechnikov(k) {
+function kernelEpanechnikov(k, amplitude) {
   return function(v) {
-    return Math.abs(v /= k) <= 1 ? 0.4 * (1 - v * v) / k : 0; // alter the "0.4" as this scales the amplitude - could be dynamic in the future
+    return Math.abs(v /= k) <= 1 ? amplitude * (1 - v * v) / k : 0; // alter the "0.4" as this scales the amplitude - could be dynamic in the future
   };
 }
+
+
+function splitSegments(filtered_change_location) {
+  			    var segmentStore = [];
+  			    for (i = 0; i < filtered_change_location.length-1; i++) {
+  			      if (i > 0) {
+  			        var chunk = data.data_set.slice(filtered_change_location[i]+1, filtered_change_location[i+1]+1);
+  			      } else {
+  			        var chunk = data.data_set.slice(filtered_change_location[i], filtered_change_location[i+1]+1);
+  			      }
+                  segmentStore.push(chunk);
+                }
+              return segmentStore
+          }
+
+function calcSegMeans(segments) {
+            var meanStore = [];
+            for (i = 0; i < segments.length; i++) {
+              var sum = 0;
+              for (var k = 0; k < segments[i].length; k++){
+                sum += parseFloat(segments[i][k]);
+              }
+              var avg = sum/segments[i].length;
+              meanStore.push(avg);
+            }
+            return meanStore
+          }
+
+function weighMeans(means) {
+              var weightedMeanStore = [];
+              for (i = 0; i < segments.length; i++){
+                for (var k = 0; k < segments[i].length; k++){
+                  weightedMeanStore.push(means[i])
+                }
+              }
+              return weightedMeanStore
+           }
+
+
+
+function updateHist(amplitude, KDEvalue, ticks2) {
+      mean_hist.selectAll(".mean_hist_density").remove();
+      var n = weighted_mean.length,
+      bins = d3.histogram().domain(mean_hist_x.domain()).thresholds(d3.thresholdSturges)(weighted_mean),
+      density = kernelDensityEstimator(kernelEpanechnikov(KDEvalue, amplitude), mean_hist_x.ticks(ticks2))(weighted_mean);
+
+      mean_hist_y.domain([0, (d3.max(bins, function(d) { return d.length; })/data.data_set.length)]).nice()
+
+    //update for path
+    mean_hist.append("path")
+        .datum(density)
+        .attr("class", "mean_hist_density")
+        .attr("fill", "none")
+        .attr("stroke", "#000")
+        .attr("stroke-width", 1.5)
+        .attr("stroke-linejoin", "round")
+        .attr("d",  d3.line()
+            .curve(d3.curveBasis)
+            .x(function(d) { return mean_hist_x(d[0]); })
+            .y(function(d) { return mean_hist_y(d[1]); }));
+
+}
+
+
+d3.select("#amplitude").on("input", function() {
+    amplitude = this.value
+    updateHist(+this.value, KDEvalue);
+  });
+
+d3.select("#KDEval").on("input", function() {
+    KDEvalue = this.value
+    updateHist(amplitude, +this.value);
+  });
+
+d3.select("#ticks").on("input", function() {
+    ticks = this.value
+    updateHist(amplitude, KDEvalue, +this.value);
+  });
 
 solution_plot.append("g")
     .attr("class", "x axis")

@@ -33,8 +33,19 @@ h3 {
 }
 
 #mean_hist {
+  position: relative;
   height: 400px;
-  width: 100%
+  width: 100%;
+}
+#histControl {
+  margin: 10px;
+  position: absolute;
+  bottom: -100px;
+  left: 0;
+}
+
+input {
+  margin-left: 5px;
 }
 
 

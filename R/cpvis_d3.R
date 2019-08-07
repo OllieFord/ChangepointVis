@@ -42,9 +42,7 @@
 #' }
 #' @export cpVisualise
 
-penalty_range = c(1e-5,10)
-
-cpVisualise <- function(data, penalty_range){
+cpVisualise <- function(data, penalty_range = c(1e-5,10)){
 
     shinyApp(
         ui <- fluidPage(
@@ -60,7 +58,17 @@ cpVisualise <- function(data, penalty_range){
                         tags$div(class = "col-lg-3",
                                  tags$div(id = "data_overview",
                                           tags$div(class = "info"),
-                                          tags$div(id = "mean_hist")
+                                          tags$div(id = "mean_hist",
+                                                   HTML("<p id=histControl>
+                                                          <label>Amplitude</label>
+                                                          <input type='number' min='0.1' max='50' step='0.1' value='0.6' id='amplitude'>
+                                                          <label>  KDE</label>
+                                                          <input type='number' min='1' max='100' step='1' value='2' id='KDEval'>
+                                                          <label>  Resolution</label>
+                                                          <input type='number' min='10' max='200' step='5' value='40' id='ticks'>
+                                                          </p>
+
+                                                        "))
                                           )
                                  )
                         )
