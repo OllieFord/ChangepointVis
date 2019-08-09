@@ -5,6 +5,14 @@
 var data = r2d3.data;
 var labels = new Array(data.data_set.length).fill('normal');
 
+// recieve data - changepoint indexes
+// find smallest distance between numbers
+// convert indexes to ranges (add padding either side of label, max padding = min distance between changepoints -1)
+
+// add padding to breakpoint regions
+
+console.log(labels);
+
 const accentColour = "#4363d8"; //blue
 
 const blue = "#2c7bb6";
@@ -67,6 +75,39 @@ dataVisualisation.call( d3.brushX()
         .on("end", updateChart)
       );
 
+if (data.unsup_labels.changepoint) {
+  new_labels = addLabelPadding();
+  useUnsupervisedLabels(new_labels);
+  showAnnotation();
+}
+
+function showAnnotation() {
+    var annotations = [];
+    var positions = [];
+    var min = [];
+    var max = [];
+    var breakpointRanges = [];
+
+    breakpointRanges = breakpointLabelRanges();
+
+    breakpointNestedLabels = convertNestedPairs(breakpointRanges);
+
+    convertedLabelData = convertAnnotationData(labels, annotations, min, max, positions);
+
+    dataVisualisation.selectAll("bar")
+      .data(breakpointNestedLabels)
+      .enter()
+      .append("rect")
+      .attr("class", "class_rect")
+      .attr("x", function(d) { return x(d[0]) })
+      .attr("y", heightPadding)
+      .attr("height", (height - (heightPadding * 2)))
+      .attr("width", function(d) { return z(Math.abs(d[1] - d[0]))}) // magic 2 until i figure out the issue - will not work for other data.
+      .attr("fill", red)
+      .style("opacity", "0.2")
+      .style("stroke", "none");
+}
+
 
 function updateChart() {
       var annotations = [];
@@ -84,12 +125,9 @@ function updateChart() {
         labels[i] = formValue;
     }
 
-    breakpointLabelRanges();
+    breakpointRanges = breakpointLabelRanges();
+    breakpointNestedLabels = convertNestedPairs(breakpointRanges);
 
-    breakpointNestedLabels = convertNestedPairs();
-    //console.log(range);
-    //console.log(breakpointRanges);
-    //console.log(breakpointNestedLabels);
     dataVisualisation.selectAll(".class_rect").remove();
     dataVisualisation.selectAll(".overlay").remove();
     dataVisualisation.selectAll(".selection").remove();
@@ -126,35 +164,11 @@ function updateChart() {
       	    }
       	   }
       }
-
-      function breakpointLabelRanges() {
-        var flipFlop = true;
-        for (let i = 0 ; i< labels.length; i++){
-            if (labels[i] === "breakpoint" && flipFlop === true) {
-              breakpointRanges.push(i);
-              flipFlop = false;
-            }
-            if (labels[i] != labels[(i+1)] && flipFlop === false) {
-              breakpointRanges.push((i+1));
-              flipFlop = true;
-            }
-        }
-    }
-
-
-    function convertNestedPairs(){
-      let breakLabels = [];
-      for (let i = 0 ; i< breakpointRanges.length; i += 2){
-        breakLabels.push([breakpointRanges[i], breakpointRanges[(i+1)]]);
-      }
-      return breakLabels;
-    }
-
-
 }
 
 let sendLabelData2Server = d3.select(".send_data")
               .on("click", function(){
+                console.log(JSON.stringify(convertedLabelData));
                   Shiny.setInputValue(
                     "data_sent",
                     JSON.stringify(convertedLabelData),
@@ -168,6 +182,30 @@ let sendSegmentNumber2Server = d3.select("#segmentselect")
                     d3.select(this).property("value"),
                     {priority: "event"}
                     )});
+
+function convertNestedPairs(breakpointRanges){
+      let breakLabels = [];
+      for (let i = 0 ; i< breakpointRanges.length; i += 2){
+        breakLabels.push([breakpointRanges[i], breakpointRanges[(i+1)]]);
+      }
+      return breakLabels;
+    }
+
+function breakpointLabelRanges() {
+        var breakpointRanges =[]
+        var flipFlop = true;
+        for (let i = 0 ; i< labels.length; i++){
+            if (labels[i] === "breakpoint" && flipFlop === true) {
+              breakpointRanges.push(i);
+              flipFlop = false;
+            }
+            if (labels[i] != labels[(i+1)] && flipFlop === false) {
+              breakpointRanges.push((i+1));
+              flipFlop = true;
+            }
+        }
+        return breakpointRanges
+    }
 
 function convertAnnotationData(labels, annotations, min, max, positions) {
       for (let i = 0; i < labels.length; i++) {
@@ -193,6 +231,22 @@ function convertAnnotationData(labels, annotations, min, max, positions) {
         tmp_data.push(tmp);
       }
       return tmp_data;
+}
+
+function addLabelPadding(){
+  var new_labels = [];
+  for (let i = 0; i < data.unsup_labels.changepoint.length; i++) {
+    new_labels.push((data.unsup_labels.changepoint[i] -1));
+    new_labels.push((data.unsup_labels.changepoint[i]));
+    new_labels.push((data.unsup_labels.changepoint[i] +1));
+  }
+  return new_labels;
+}
+
+function useUnsupervisedLabels(new_labels) {
+  for (let i = 0; i < new_labels.length; i++) {
+  labels[new_labels[i]] = "breakpoint";
+  }
 }
 
 r2d3.onRender(function(data) {

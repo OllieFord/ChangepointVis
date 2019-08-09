@@ -32,9 +32,12 @@
 #'
 #' @export cpLabel
 
-cpLabel <- function(data){
+cpLabel <- function(data, unsupervised_changepoints = FALSE){
 
-  #assign("cpstore.labels", data.frame(), envir = .GlobalEnv)
+  if (unsupervised_changepoints) {
+    unsupervisedLabels <- tryCatch(read.csv(file="saved_data/changePointLocations.csv", header=TRUE, sep=","), error=function(e) 1)
+    unsupervisedLabels <- tryCatch(as.list(unsupervisedLabels['changepoint']), error=function(e) 1)
+  }
 
   shinyApp(
     ui <- fluidPage(
@@ -78,15 +81,19 @@ cpLabel <- function(data){
     ),
 
     server <- function(input, output, session) {
+
+      if (is.na(unsupervisedLabels)) {
+        json <- jsonlite::toJSON(c(data_set = list(data),  predictions = list("NULL"), unsup_labels = list(unsupervisedLabels)), pretty = TRUE)
+      } else {
+        json <- jsonlite::toJSON(c(data_set = list(data),  predictions = list("NULL")), pretty = TRUE)
+        }
       # convert the data to json
-      json <- jsonlite::toJSON(c(data_set = list(data),  predictions = list("NULL")), pretty = TRUE)
 
 
       cpstore.labels <- "data"
 
       #output/send to client
       output$main_data <- renderD3({
-
 
         if (is.null(input$data_sent)) {
           r2d3(data=json, script = system.file("JS/univariate_label.js", package = "CpVis"), d3_version = 4, container = "div")
@@ -193,9 +200,6 @@ cpLabel <- function(data){
           targetIndex <- which(grepl(cpstore.target$min.log.lambda, cpstore.selection$min.log.lambda))
           predictedSegments <- cpstore.selection[targetIndex,]$n.segments
           predictedChangeLocations <- cpstore.changes[cpstore.changes$n.segments == predictedSegments,]$rawStart
-
-
-          #predictedChangeLocations <- cpstore.changes[cpstore.changes$n.segments == predictedSegments,]$rawStart
 
           predictedChange <- jsonlite::toJSON(c(data_set = list(data), predictions = list(predictedChangeLocations)), pretty = TRUE)
           r2d3(data=predictedChange, script = system.file("JS/univariate_label.js", package = "CpVis"), d3_version = 4, container = "div")

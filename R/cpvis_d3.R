@@ -49,7 +49,11 @@ cpVisualise <- function(data, penalty_range = c(1e-5,10)){
 
           tags$head(includeCSS(system.file('WWW', 'vis.css', package = 'CpVis'))),
 
-            tags$h3("CPVisualise"),
+          tags$div(class = "row",
+                   tags$div(class = "col-lg-9",
+                   tags$h3("CPVisualise")),
+                   tags$div(class = "col-lg-3",
+                   HTML("<button type='button' class='btn btn-primary send_data'>Save Changepoints</button>"))),
                tags$div(class = "row justify-content-md-left",
                         tags$div(class = "col-lg-9",
                                  tags$div(id = "main_output", d3Output("main_data"))
@@ -110,6 +114,18 @@ cpVisualise <- function(data, penalty_range = c(1e-5,10)){
           output$main_data <- renderD3({
                 r2d3(data=json, script = system.file("JS/univariate_visualisation.js", package = "CpVis"), d3_version = 4, container = "div")
               })
+
+          #save user selected label data to current working directory
+          observeEvent(input$data_sent, {
+              labels <- fromJSON(input$data_sent)
+              if (dir.exists("saved_data")) {
+                write.csv(labels,"saved_data/changePointLocations.csv", row.names = FALSE)
+              } else {
+                  dir.create("saved_data")
+                  write.csv(labels,"saved_data/changePointLocations.csv", row.names = FALSE)
+              }
+          })
+
 
         }
     )

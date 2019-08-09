@@ -316,6 +316,8 @@ solution_plot.selectAll("circle")
 
 			     filtered_change_location = all_changepoints[changepoint_lengths.indexOf((d.numberofchangepoints -1))];
 
+			     //console.log(JSON.stringify(filtered_change_location));
+
           // split the data into segemnts
            segments = splitSegments(filtered_change_location);
 
@@ -623,6 +625,27 @@ function updateHist(amplitude, KDEvalue, ticks2) {
             .y(function(d) { return mean_hist_y(d[1]); }));
 
 }
+
+// convert data to json format
+//
+
+function changepoint2Json(filtered_change_location) {
+  let tmp_data = [];
+  for (let i = 1; i < (filtered_change_location.length-1); i++) {
+    let tmp = {changepoint:filtered_change_location[i]};
+    tmp_data.push(tmp);
+  }
+  return tmp_data;
+}
+
+let sendLabelData2Server = d3.select(".send_data")
+              .on("click", function(){
+                jsonData = changepoint2Json(filtered_change_location)
+                  Shiny.setInputValue(
+                    "data_sent",
+                    JSON.stringify(jsonData),
+                    {priority: "event"}
+                    )});
 
 
 d3.select("#amplitude").on("input", function() {
