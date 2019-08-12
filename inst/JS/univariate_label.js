@@ -11,7 +11,8 @@ var labels = new Array(data.data_set.length).fill('normal');
 
 // add padding to breakpoint regions
 
-console.log(labels);
+//console.log(labels);
+//console.log(JSON.stringify(data));
 
 const accentColour = "#4363d8"; //blue
 
@@ -76,9 +77,19 @@ dataVisualisation.call( d3.brushX()
       );
 
 if (data.unsup_labels.changepoint) {
-  new_labels = addLabelPadding();
-  useUnsupervisedLabels(new_labels);
+  //merge close together breakpoints
+  tmp_data = removeNeighbours();
+  new_labels = addLabelPadding(tmp_data);
+  overlap = checkOverlap(new_labels);
+  //console.log(JSON.stringify(new_labels));
+  useUnsupervisedLabels(overlap);
+  labels = fillGaps(labels)
+  //console.log(JSON.stringify(overlap));
+  //checkRanges(overlap);
+
   showAnnotation();
+  //console.log(JSON.stringify(labels));
+
 }
 
 function showAnnotation() {
@@ -124,6 +135,7 @@ function updateChart() {
     for (let i = range[0] ; i< range[1]; i++){
         labels[i] = formValue;
     }
+    labels = fillGaps(labels)
 
     breakpointRanges = breakpointLabelRanges();
     breakpointNestedLabels = convertNestedPairs(breakpointRanges);
@@ -168,7 +180,7 @@ function updateChart() {
 
 let sendLabelData2Server = d3.select(".send_data")
               .on("click", function(){
-                console.log(JSON.stringify(convertedLabelData));
+                //console.log(JSON.stringify(convertedLabelData));
                   Shiny.setInputValue(
                     "data_sent",
                     JSON.stringify(convertedLabelData),
@@ -233,20 +245,67 @@ function convertAnnotationData(labels, annotations, min, max, positions) {
       return tmp_data;
 }
 
-function addLabelPadding(){
+function removeNeighbours(){
   var new_labels = [];
   for (let i = 0; i < data.unsup_labels.changepoint.length; i++) {
-    new_labels.push((data.unsup_labels.changepoint[i] -1));
-    new_labels.push((data.unsup_labels.changepoint[i]));
-    new_labels.push((data.unsup_labels.changepoint[i] +1));
-  }
-  return new_labels;
+    if ((data.unsup_labels.changepoint[i] +1) == data.unsup_labels.changepoint[i+1]) {
+      new_labels.push(data.unsup_labels.changepoint[i])
+      i += 2
+    } else {
+      new_labels.push(data.unsup_labels.changepoint[i])
+    }
+}
+return new_labels
 }
 
-function useUnsupervisedLabels(new_labels) {
-  for (let i = 0; i < new_labels.length; i++) {
-  labels[new_labels[i]] = "breakpoint";
+function addLabelPadding(inputArray){
+  var storage = [];
+  for (let i = 0; i < inputArray.length; i++) {
+    storage.push((inputArray[i] -1));
+    //new_labels.push((data.unsup_labels.changepoint[i]));
+    storage.push((inputArray[i] +1));
   }
+  return storage;
+}
+
+function checkOverlap(new_labels) {
+  var unique_labels = [];
+  for (let i = 1; i < new_labels.length; i += 2) {
+    if (new_labels[i] == new_labels[(i+1)]) {
+      unique_labels.push(new_labels[(i-1)]);
+      unique_labels.push(new_labels[(i+2)]);
+      i +=2;
+    } else {
+      unique_labels.push(new_labels[(i-1)]);
+      unique_labels.push(new_labels[(i)]);
+    }
+  }
+  return unique_labels
+}
+
+function useUnsupervisedLabels(inputArray) {
+  for (let i = 0; i < inputArray.length; i+=2) {
+    var replace = new Array(((inputArray[(i+1)] - inputArray[i]) + 1)).fill('breakpoint');
+    labels.splice((inputArray[i] -1), ((inputArray[(i+1)] - inputArray[i] +1)), ...replace)
+  }
+}
+
+function fillGaps(inputArray) {
+  for (let i = 1; i < inputArray.length; i++) {
+    if (inputArray[i] != inputArray[i-1] & inputArray[i] != inputArray[i+1]) {
+      inputArray.splice(i,1, inputArray[(i+1)])
+    }
+  }
+  return inputArray
+}
+
+function checkRanges(inputArray) {
+  for (let i = 0; i < inputArray.length; i+=2) {
+    if (inputArray[i] >= inputArray[(i+1)]){
+      //console.log(i)
+    }
+}
+
 }
 
 r2d3.onRender(function(data) {

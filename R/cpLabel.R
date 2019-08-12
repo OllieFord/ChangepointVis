@@ -35,6 +35,7 @@
 cpLabel <- function(data, unsupervised_changepoints = FALSE){
 
   if (unsupervised_changepoints) {
+    print("Loading unsupervised Changepoints")
     unsupervisedLabels <- tryCatch(read.csv(file="saved_data/changePointLocations.csv", header=TRUE, sep=","), error=function(e) 1)
     unsupervisedLabels <- tryCatch(as.list(unsupervisedLabels['changepoint']), error=function(e) 1)
   }
@@ -82,14 +83,15 @@ cpLabel <- function(data, unsupervised_changepoints = FALSE){
 
     server <- function(input, output, session) {
 
-      if (is.na(unsupervisedLabels)) {
+      print(unsupervisedLabels)
+
+      if (!is.na(unsupervisedLabels)) {
+        print("Converting data and unsupervised labels to json")
         json <- jsonlite::toJSON(c(data_set = list(data),  predictions = list("NULL"), unsup_labels = list(unsupervisedLabels)), pretty = TRUE)
       } else {
+        print("Converting data to json")
         json <- jsonlite::toJSON(c(data_set = list(data),  predictions = list("NULL")), pretty = TRUE)
         }
-      # convert the data to json
-
-
       cpstore.labels <- "data"
 
       #output/send to client
@@ -99,9 +101,7 @@ cpLabel <- function(data, unsupervised_changepoints = FALSE){
           r2d3(data=json, script = system.file("JS/univariate_label.js", package = "CpVis"), d3_version = 4, container = "div")
 
         } else {
-
           labels <- fromJSON(input$data_sent)
-
           cpstore.labels <<- labels
           #assign("cpstore.labels", labels, envir = .GlobalEnv)
 
