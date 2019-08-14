@@ -48,7 +48,6 @@ cpLabel <- function(data, unsupervised_changepoints = FALSE){
       tags$div(class = "row justify-content-md-left",
                tags$div(class = "col-lg-10",
                         tags$div(id = "main_output", d3Output("main_data"))),
-
                         tags$div(class = "col-lg-2",
                                  tags$div(id = "control",
                                  HTML("<form id='label-type'>
@@ -57,23 +56,9 @@ cpLabel <- function(data, unsupervised_changepoints = FALSE){
                                         </form>"),
                                  tags$div(id="segments", HTML("<div class='form-group'>
                                                                         <label for='exampleFormControlSelect1'>Number of Segments</label>
-                                                                        <select class='form-control' id='segmentselect'>
-                                                                          <option>2</option>
-                                                                          <option>3</option>
-                                                                          <option>4</option>
-                                                                          <option>5</option>
-                                                                          <option>6</option>
-                                                                          <option>7</option>
-                                                                          <option>8</option>
-                                                                          <option>9</option>
-                                                                          <option>10</option>
-                                                                          <option>11</option>
-                                                                          <option>12</option>
-                                                                          <option>13</option>
-                                                                          <option>14</option>
-                                                                          <option>15</option>
-                                                                        </select>
+                                                                        <select class='form-control' id='segmentselect'></select>
                                                                       </div>")),
+                                 includeScript(system.file('WWW', 'dropdownRange.js', package = 'CpVis')),
                                  tags$div(id="run",
                                           HTML("<button type='button' class='btn btn-primary send_data'>Learn Penalties</button>")))
 
