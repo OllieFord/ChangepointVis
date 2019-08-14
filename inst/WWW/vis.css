@@ -16,6 +16,10 @@ h3 {
 
 }
 
+.send_data {
+  margin-top: 10px;
+}
+
 #solution_path {
   height: 400px;
   width: 70vw;
