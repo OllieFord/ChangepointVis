@@ -32,7 +32,7 @@ var heightPadding = 20;
 const x = d3.scaleLinear().range([(0 + widthPadding), (width - widthPadding)]).nice(),
       y = d3.scaleLinear().range([height - heightPadding, (0 + heightPadding)]).nice(),
       labelScale = d3.scaleLinear().domain([widthPadding, width - widthPadding]).range([0, data.data_set.length]),
-      z = d3.scaleLinear().domain([0, data.data_set.length]).range([widthPadding, (width - widthPadding)]);
+      z = d3.scaleLinear().domain([0, data.data_set.length]).range([0, (width - (widthPadding*2))]).nice();
 
 //console.log(x);
 
@@ -113,7 +113,7 @@ function showAnnotation() {
       .attr("x", function(d) { return x(d[0]) })
       .attr("y", heightPadding)
       .attr("height", (height - (heightPadding * 2)))
-      .attr("width", function(d) { return z(Math.abs(d[1] - d[0]))}) // magic 2 until i figure out the issue - will not work for other data.
+      .attr("width", function(d) { return z(Math.abs((d[1] - d[0])))}) //  data.
       .attr("fill", red)
       .style("opacity", "0.2")
       .style("stroke", "none");
@@ -155,7 +155,7 @@ function updateChart() {
       .attr("x", function(d) { return x(d[0]) })
       .attr("y", heightPadding)
       .attr("height", (height - (heightPadding * 2)))
-      .attr("width", function(d) { return z(Math.abs(d[1] - d[0]))}) // magic 2 until i figure out the issue - will not work for other data.
+      .attr("width", function(d) { return z(Math.abs(d[1] - d[0]))})
       .attr("fill", red)
       .style("opacity", "0.2")
       .style("stroke", "none");
