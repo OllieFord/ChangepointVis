@@ -48,7 +48,7 @@ cpLabel <- function(data, unsupervised_changepoints = FALSE){
       tags$div(class = "row justify-content-md-left",
                tags$div(class = "col-lg-10",
                         tags$div(id = "main_output", d3Output("main_data"))),
-                        tags$div(class = "col-lg-2 text-center",
+                        tags$div(class = "col-lg-2",
                                  tags$div(id = "control",
                                  HTML("<form id='label-type'>
                                         <label class='block'> <div class='small-box zero'></div> <input type='radio' id='normal' name='mode' checked></input> <span class='select'>   No label</span> </label>
@@ -60,9 +60,9 @@ cpLabel <- function(data, unsupervised_changepoints = FALSE){
                                                                       </div>")),
                                  includeScript(system.file('WWW', 'dropdownRange.js', package = 'CpVis')),
                                  tags$div(id="run",
-                                          HTML("<button type='button' class='btn btn-primary send_data'>Learn Penalties</button>"))),
+                                          HTML("<button type='button' class='btn btn-primary send_data'>Learn Penalties</button>")),
                                  tags$div(id="save",
-                                          HTML("<button type='button' class='btn btn-primary save_data'>Save Labels</button>"))
+                                          HTML("<button type='button' class='btn btn-primary save_data'>Save Labels</button>")))
 
                                  )
                         )
