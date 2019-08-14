@@ -180,9 +180,16 @@ function updateChart() {
 
 let sendLabelData2Server = d3.select(".send_data")
               .on("click", function(){
-                //console.log(JSON.stringify(convertedLabelData));
                   Shiny.setInputValue(
                     "data_sent",
+                    JSON.stringify(convertedLabelData),
+                    {priority: "event"}
+                    )});
+
+let saveLabelData = d3.select(".save_data")
+              .on("click", function(){
+                  Shiny.setInputValue(
+                    "data_save",
                     JSON.stringify(convertedLabelData),
                     {priority: "event"}
                     )});
