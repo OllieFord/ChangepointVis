@@ -1,27 +1,33 @@
 
 #' Visual Interface for Unsupervised Changepoint Penalty Exploration
 #'
-#' This function takes a univariate dataset as input, as well as a range of penalty values.
-#' It uses cpt.mean with the "PELT" method and "CROPS" penalty type from the changepoint package.
-#' The function opens a web interface that displays:
+#'@description { This function calculates the optimal positioning and (potentially) number of changepoints for a given univariate dataset using the user
+#'specified range of penalty values.
+#'It uses cpt.mean with the "PELT" method and "CROPS" penalty type from the changepoint package.
+#'
+#'
+#'The function starts a shiny server and acompanying web interface that displays:
 #' \enumerate{
 #' \item The univariate datset (top left)
 #' \item General statistics (top right)
 #' \item Solution path (bottom left)
 #' \item Weighted means histogram of the segments between changepoints.
 #' }
-#'
 #' The main form of interaction with the interface is through selecting each penalty value and then inspecting the resulting solution on the main plot (top left).
+#'
+#' }
+#' @usage cpVisualise(data, penalty_range = c(1,10))
 #'
 #' @name cpVisualise
 #'
-#' @param data A univariate dataset
-#' @param penalty_range A range of penalty values
+#' @param data A univariate dataset. This should be a vector containing the data within which you wish to find a changepoint.
+#' @param penalty_range A range of penalty values. This will vary based on the datset and is used to compute changepoints for the data for each penalty value.
 #'
+#' @details {This function is used to find changes in mean for a given dataset using the PELT method.
+#' The function visualises the data, along side an interactive solution path, allowing the usert to inspect how different penalty values impact the resulting changepoint locations.
+#' Additional information is also presented to help the user interpret the data and specific penalty value. A table containing general statistics such as mean, variance etc and a weighted histogram, showing the distribution of segment means (weighted by length) for a particular penalty value.
 #'
-#' @usage cpVisualise(data, penalty_range)
-#'
-#'
+#'}
 #' @import shiny
 #' @import r2d3
 #' @import htmlwidgets
@@ -31,15 +37,20 @@
 #' @importFrom utils stack
 #'
 #'
-#' @return starts a shiny app in a new window
+#' @return Starts a shiny app in a new window.
+#' @return Saves the currently selected solution as a .csv file, for use in cpLabel.
 #'
+#' @author Oliver Ford
+#' @references
 #'
 #' @examples
 #' \dontrun{
+#' # Basic example of creating a dummy dataset and running cpVisualise to explore a range of penalty values.
 #' data = c(rnorm(100,0,1),rnorm(100,5,1))
 #' penalty_range = c(1e-5,10)
 #' cpVisualise(data, penalty_range)
 #' }
+
 #' @export cpVisualise
 
 cpVisualise <- function(data, penalty_range = c(1e-5,10)){

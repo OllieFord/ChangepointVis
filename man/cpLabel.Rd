@@ -2,21 +2,49 @@
 % Please edit documentation in R/cpLabel.R
 \name{cpLabel}
 \alias{cpLabel}
-\title{Visual Interface for Changepoint Penalty Exploration (D3 version)}
+\title{Visual Interface for Labeling and learning a penalty function}
 \usage{
-cpLabel(data)
+cpLabel(data, unsupervised_changepoints = FALSE)
 }
 \arguments{
-\item{data}{A univariate dataset}
+\item{data}{A univariate dataset.}
+
+\item{unsupervised_changepoint}{a boolean value, if set to TRUE, the function will try to load changepoints that were created by cpVisulaise and use these to label the data on startup.}
+
+\item{NoLabel}{Used to create regions where no changepoints should be.}
+
+\item{ChangePointRegion}{Used to create regions where changepoints should be.}
+
+\item{NumberofSegments}{used to determine how many models should be evaluated for the given labeled data. Roughly equates to the number of changepoints you belive should be in the data.}
+
+\item{LearnPenalties}{run the penalty learning algorithm given the labeled data. Returns predicted changepoints.}
+
+\item{SaveLabels}{saves the labels as a .csv file.}
 }
 \value{
 starts a shiny app in a new window
 }
 \description{
-This function takes a univariate dataset as input. Provides simple labeling and exporting functionality for univariate time seriese data.
+{ This Function implements a simple changepoint labeling tool as well as the penalty learning algorithm to learn a penalty function that can be used to accurately predict changepoints in labeled data.
+
+The function starts a shiny server and acompanying web interface that displays:
+\enumerate{
+\item The univariate datset (top left)
+\item Control Pannel (top right)
+}
+The main form of interaction with the interface is through selecting a label type (top right) and then selecting regions of the data which you would like to assign said label type.
+Additionaly, by clicking "learn Penalties" a penalty function is learned from the labeled data and the resulting changepoint(s) are displayed.
+
+}
+}
+\details{
+{This function is used to both label a dataset and to learn a penalty function from the labeled data. Furthermore, this labeled data can be exported for use in other applications.
+
+In addition to the base functionality, this function also allows the data to be pre-labeled using changepoints found using the unsupervised methods in cpVisualise. This can be done by first selecting and saving a solution in cpVisualise (by clicking the "save changepoints" button) and then running cpLabel with \strong{unsupervised_changepoints} set to TRUE. }
 }
 \examples{
 \dontrun{
+# Basic example of creating a dummy dataset and running cpLabel.
 data = c(rnorm(100,0,1),rnorm(100,5,1))
 cpLabel(data)
 }

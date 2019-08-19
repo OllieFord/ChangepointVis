@@ -5,15 +5,6 @@
 var data = r2d3.data;
 var labels = new Array(data.data_set.length).fill('normal');
 
-// recieve data - changepoint indexes
-// find smallest distance between numbers
-// convert indexes to ranges (add padding either side of label, max padding = min distance between changepoints -1)
-
-// add padding to breakpoint regions
-
-//console.log(labels);
-//console.log(JSON.stringify(data));
-
 const accentColour = "#4363d8"; //blue
 
 const blue = "#2c7bb6";
@@ -76,7 +67,7 @@ dataVisualisation.call( d3.brushX()
         .on("end", updateChart)
       );
 
-if (data.unsup_labels.changepoint) {
+if ('unsup_labels' in data) {
   //merge close together breakpoints
   tmp_data = removeNeighbours();
   new_labels = addLabelPadding(tmp_data);
@@ -91,6 +82,8 @@ if (data.unsup_labels.changepoint) {
   //console.log(JSON.stringify(labels));
 
 }
+
+
 
 function showAnnotation() {
     var annotations = [];
