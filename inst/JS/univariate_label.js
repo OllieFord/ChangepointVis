@@ -25,8 +25,6 @@ const x = d3.scaleLinear().range([(0 + widthPadding), (width - widthPadding)]).n
       labelScale = d3.scaleLinear().domain([widthPadding, width - widthPadding]).range([0, data.data_set.length]),
       z = d3.scaleLinear().domain([0, data.data_set.length]).range([0, (width - (widthPadding*2))]).nice();
 
-//console.log(x);
-
 const xAxis = d3.axisBottom(x),
     yAxis = d3.axisLeft(y);
 
@@ -68,22 +66,13 @@ dataVisualisation.call( d3.brushX()
       );
 
 if ('unsup_labels' in data) {
-  //merge close together breakpoints
   tmp_data = removeNeighbours();
   new_labels = addLabelPadding(tmp_data);
   overlap = checkOverlap(new_labels);
-  //console.log(JSON.stringify(new_labels));
   useUnsupervisedLabels(overlap);
   labels = fillGaps(labels)
-  //console.log(JSON.stringify(overlap));
-  //checkRanges(overlap);
-
   showAnnotation();
-  //console.log(JSON.stringify(labels));
-
 }
-
-
 
 function showAnnotation() {
     var annotations = [];
@@ -262,7 +251,6 @@ function addLabelPadding(inputArray){
   var storage = [];
   for (let i = 0; i < inputArray.length; i++) {
     storage.push((inputArray[i] -1));
-    //new_labels.push((data.unsup_labels.changepoint[i]));
     storage.push((inputArray[i] +1));
   }
   return storage;
@@ -302,7 +290,6 @@ function fillGaps(inputArray) {
 function checkRanges(inputArray) {
   for (let i = 0; i < inputArray.length; i+=2) {
     if (inputArray[i] >= inputArray[(i+1)]){
-      //console.log(i)
     }
 }
 

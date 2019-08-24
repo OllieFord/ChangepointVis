@@ -16,8 +16,13 @@ h3 {
 
 }
 
+.center {
+  text-align: center;
+}
+
 .send_data {
   margin-top: 10px;
+  text-align: center;
 }
 
 #solution_path {

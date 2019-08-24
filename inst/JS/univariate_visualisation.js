@@ -18,9 +18,7 @@ for (let i = 0; i < data.cpts_full.length; i++) {
   changepoint_lengths.push(data.cpts_full[i].length);
 }
 
-//console.log(changepoint_lengths);
-
-// new cpts_full data  (to, changed to index at zero)
+// new cpts_full data  (change's index to zero)
 all_changepoints = [];
 for (let i = 0; i < data.cpts_full.length; i++) {
   var change_locations = [];
@@ -45,7 +43,6 @@ for (let i = 0; i < all_changepoints.length; i++) {
 
 var counts_keys = d3.keys(counts);
 var counts_values = d3.values(counts);
-//var scaled_counts = counts_values.map(function(x) x * d3.max(counts_values));
 
 var hist_data = [];
 for (let i = 0; i < counts_values.length; i++) {
@@ -109,7 +106,6 @@ var spyAxis = d3.axisLeft()
 
 var div = div.style("background", "none");
 
-// Create seperate svgs for each plot
 // Main plot
 var main_plot = div
   .append("svg")
@@ -316,8 +312,6 @@ solution_plot.selectAll("circle")
 
 			     filtered_change_location = all_changepoints[changepoint_lengths.indexOf((d.numberofchangepoints -1))];
 
-			     //console.log(JSON.stringify(filtered_change_location));
-
           // split the data into segemnts
            segments = splitSegments(filtered_change_location);
 
@@ -326,8 +320,6 @@ solution_plot.selectAll("circle")
 
            // weigh means with wrt segment length
            weighted_mean = weighMeans(means);
-
-          //console.log(JSON.stringify(means));
 
 			     var xPosition = parseFloat(d3.select(this).attr("cx"))+ 50;
 			     var yPosition = parseFloat(d3.select(this).attr("cy")) -10;
@@ -457,7 +449,6 @@ solution_plot.selectAll("circle")
       			 var n = weighted_mean.length,
               bins = d3.histogram().domain(mean_hist_x.domain()).thresholds(d3.thresholdSturges)(weighted_mean),
               density = kernelDensityEstimator(kernelEpanechnikov(KDEvalue, amplitude), mean_hist_x.ticks(ticks))(weighted_mean);
-            //console.log(d3.max(bins, function(d) { return d.length; }));
 
             mean_hist_y.domain([0, (d3.max(bins, function(d) { return d.length; })/data.data_set.length)]).nice()
 
@@ -625,9 +616,6 @@ function updateHist(amplitude, KDEvalue, ticks2) {
             .y(function(d) { return mean_hist_y(d[1]); }));
 
 }
-
-// convert data to json format
-//
 
 function changepoint2Json(filtered_change_location) {
   let tmp_data = [];

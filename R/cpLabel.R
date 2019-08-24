@@ -92,7 +92,7 @@ cpLabel <- function(data, unsupervised_changepoints = FALSE){
 
     server <- function(input, output, session) {
 
-      if (unsupervised_changepoints) {
+      if (is.not.na(unsupervised_changepoints)) {
         print("Converting data and unsupervised labels to json")
         json <- jsonlite::toJSON(c(data_set = list(data),  predictions = list("NULL"), unsup_labels = list(unsupervisedLabels)), pretty = TRUE)
       } else {
@@ -104,16 +104,12 @@ cpLabel <- function(data, unsupervised_changepoints = FALSE){
       #output/send to client
       output$main_data <- renderD3({
 
-        if (is.null(input$data_sent)) {
+        if ((input$data_sent)) {
           r2d3(data=json, script = system.file("JS/univariate_label.js", package = "CpVis"), d3_version = 4, container = "div")
 
         } else {
           labels <- fromJSON(input$data_sent)
           cpstore.labels <<- labels
-          #assign("cpstore.labels", labels, envir = .GlobalEnv)
-
-         # cpstore.labels <<-
-          #save(labels,file="labels.Rda")
 
           # segment the data into n models
           max.segments <- 2
@@ -216,10 +212,10 @@ cpLabel <- function(data, unsupervised_changepoints = FALSE){
       })
 
       #for future use - to save labels to csv file, will probably make a button in interface to save results.
-      session$onSessionEnded(function() {
-        print(cpstore.labels)
-
-      })
+      # session$onSessionEnded(function() {
+      #   print(cpstore.labels)
+      #
+      # })
 
       #save user selected label data to current working directory
       observeEvent(input$data_save, {

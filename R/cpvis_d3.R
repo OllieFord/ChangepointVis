@@ -63,7 +63,7 @@ cpVisualise <- function(data, penalty_range = c(1e-5,10)){
           tags$div(class = "row",
                    tags$div(class = "col-lg-9",
                    tags$h3("CPVisualise")),
-                   tags$div(class = "col-lg-3",
+                   tags$div(class = "col-lg-3 center",
                    HTML("<button type='button' class='btn btn-primary send_data'>Save Changepoints</button>"))),
                tags$div(class = "row justify-content-md-left",
                         tags$div(class = "col-lg-9",
