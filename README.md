@@ -18,7 +18,14 @@
   <a href="#license">License</a>
 </p>
 
-![screenshot](https://raw.githubusercontent.com/OllieFord/ChangepointVis/master/inst/images/showcase.gif)
+
+CpVisualise            |  CpLabel
+:-------------------------:|:-------------------------:
+![screenshot](https://raw.githubusercontent.com/OllieFord/ChangepointVis/master/inst/images/cpVisualise.gif) | ![screenshot](https://raw.githubusercontent.com/OllieFord/ChangepointVis/master/inst/images/cpLabel.gif)
+
+
+
+This package was developed as part of Google Summer of Code. An acompanying website has been built, containing much of the same information as well as more elaborate usage examples. If you would like to see a demo using a real dataset, please head over to: [CpVis website](https://sites.google.com/view/changepointvis/home)
 
 ## Description 
 
