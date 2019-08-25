@@ -38,18 +38,22 @@ The main form of interaction with the interface is through selecting each penalt
 The function visualises the data, along side an interactive solution path, allowing the usert to inspect how different penalty values impact the resulting changepoint locations.
 Additional information is also presented to help the user interpret the data and specific penalty value. A table containing general statistics such as mean, variance etc and a weighted histogram, showing the distribution of segment means (weighted by length) for a particular penalty value.
 
+For an extended usage example, please see the accompanying website: \url{https://sites.google.com/view/changepointvis/home}
+
 }
 }
 \examples{
-{
 \dontrun{
-# Basic example of creating a dummy dataset and running cpVisualise to explore a range of penalty values.
-
 data = c(rnorm(100,0,1),rnorm(100,5,1))
 penalty_range = c(1e-5,10)
 cpVisualise(data, penalty_range)
 }
+
 }
+\references{
+{
+PELT Algorithm: Killick R, Fearnhead P, Eckley IA (2012) Optimal detection of changepoints with a linear computational cost, JASA 107(500), 1590–1598 \cr
+CROPS: Haynes K, Eckley IA, Fearnhead P (2014) Efficient penalty search for multiple changepoint problems (in submission), arXiv:1412.3617}
 }
 \author{
 Oliver Ford

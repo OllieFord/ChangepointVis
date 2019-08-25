@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "O.T.Ford@sms.ed.ac.uk",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: This package provides an interactive web interface for working with the changepoint and penalty learning packages. This packages' primary focus is to allow researchers to visually explore and quickly find the best parameters for both unsupervised and supervised changepoint detection algorithms. The interactive visual interface has the advantage of being easy to use, speeding up the analysis for domain experts and analysts, while simultaneously lowering the barrier of entry for those who wish to work with specific functions from the changepoint/ penalty learning packages.
+Description: An interactive web interface for working with the changepoint and penalty learning packages. This packages' primary focus is to allow researchers to visually explore and quickly find the best parameters for both unsupervised and supervised changepoint detection algorithms. The interactive visual interface has the advantage of being easy to use, speeding up the analysis for domain experts and analysts, while simultaneously lowering the barrier of entry for those who wish to work with specific functions from the changepoint/ penalty learning packages.
 Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -30,4 +30,3 @@ Imports:
     directlabels,
     data.table,
     penaltyLearning
-VignetteBuilder: knitr

@@ -19,7 +19,7 @@ starts a shiny app in a new window
 
 The function starts a shiny server and acompanying web interface that displays:
 \enumerate{
-\item The univariate datset (top left)
+\item The univariate dataset (top left)
 \item Control Pannel (top right)
 }
 The main form of interaction with the interface is through selecting a label type (top right) and then selecting regions of the data which you would like to assign said label type.
@@ -29,22 +29,28 @@ Additionaly, by clicking "learn Penalties" a penalty function is learned from th
 }
 \details{
 {This function is used to both label a dataset and to learn a penalty function from the labeled data. Furthermore, this labeled data can be exported for use in other applications.
-NoLabel Used to create regions where no changepoints should be.
-ChangePointRegion Used to create regions where changepoints should be.
-NumberofSegments used to determine how many models should be evaluated for the given labeled data. Roughly equates to the number of changepoints you belive should be in the data.
-LearnPenalties run the penalty learning algorithm given the labeled data. Returns predicted changepoints.
-SaveLabels saves the labels as a .csv file.
+\describe{
+\item{NoLabel}{Used to create regions where no changepoints should be.}
+\item{ChangePointRegion}{Used to create regions where changepoints should be.}
+\item{NumberofSegments}{Used to determine how many models should be evaluated for the given labeled data. Roughly equates to the number of changepoints you belive should be in the data.}
+\item{LearnPenalties}{Run the penalty learning algorithm given the labeled data. Returns predicted changepoints.}
+\item{SaveLabels}{Saves the labels as a .csv file.}
+}
 
-In addition to the base functionality, this function also allows the data to be pre-labeled using changepoints found using the unsupervised methods in cpVisualise. This can be done by first selecting and saving a solution in cpVisualise (by clicking the "save changepoints" button) and then running cpLabel with \strong{unsupervised_changepoints} set to TRUE. }
+In addition to the base functionality, this function also allows the data to be pre-labeled using changepoints found using the unsupervised methods in cpVisualise. This can be done by first selecting and saving a solution in cpVisualise (by clicking the "save changepoints" button) and then running cpLabel with \strong{unsupervised_changepoints} set to TRUE.
+
+For an extended usage example, please see the accompanying website: \url{https://sites.google.com/view/changepointvis/home}}
 }
 \examples{
-{
 \dontrun{
-# Basic example of creating a dummy dataset and running cpLabel.
 data = c(rnorm(100,0,1),rnorm(100,5,1))
 cpLabel(data)
 }
+
 }
-
-
+\references{
+Toby Hocking, Guillem Rigaill, Jean-Philippe Vert, Francis Bach ; Proceedings of the 30th International Conference on Machine Learning, PMLR 28(3):172-180, 2013.
+}
+\author{
+Oliver Ford
 }
