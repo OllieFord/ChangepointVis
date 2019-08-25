@@ -6,26 +6,28 @@
   <br>
 </h1>
 
-<h4 align="center">A Interactive Visualisation for change point exploration and labeling built on top of the <a href="https://github.com/rkillick/changepoint" target="_blank">changepoint package</a>.</h4>
+<h4 align="center">An Interactive Visualisation package for change point exploration and labeling built on top of the <a href="https://github.com/rkillick/changepoint" target="_blank">Changepoint</a> and <a href="https://cran.r-project.org/web/packages/penaltyLearning/index.html" target="_blank">Penalty Learning</a> packages.</h4>
 
 <p align="center">
+  <a href="#description">Description</a> •
   <a href="#key-features">Key Features</a> •
+  <a href="#installation">Installation</a> •
   <a href="#how-to-use">How To Use</a> •
-  <a href="#credits">Credits</a> •
   <a href="#motivation">Motivation</a> •
   <a href="#related-work">Related Work</a> •
-  <a href="#project-goals">Project Goals</a> •
-  <a href="#license">License</a>
+  <a href="#credits">Credits</a> •
+  <a href="#license">License</a> •
+  <a href="#references">References</a>
 </p>
 
 
 CpVisualise            |  CpLabel
 :-------------------------:|:-------------------------:
-![screenshot](https://raw.githubusercontent.com/OllieFord/ChangepointVis/master/inst/images/cpVisualise.gif) | ![screenshot](https://raw.githubusercontent.com/OllieFord/ChangepointVis/master/inst/images/cpLabel.gif)
+![screenshot](https://raw.githubusercontent.com/OllieFord/ChangepointVis/master/inst/images/cpVisusalise.gif) | ![screenshot](https://raw.githubusercontent.com/OllieFord/ChangepointVis/master/inst/images/cpLabel.gif)
 
 
 
-This package was developed as part of Google Summer of Code. An acompanying website has been built, containing much of the same information as well as more elaborate usage examples. If you would like to see a demo using a real dataset, please head over to: [CpVis website](https://sites.google.com/view/changepointvis/home)
+This package was developed as part of Google Summer of Code. An acompanying website has been built, containing much of the same information as well as more elaborate usage examples. If you would like to see a demo using a real dataset, please head over to: [CpVis website](https://sites.google.com/view/changepointvis/home).
 
 ## Description 
 
@@ -92,13 +94,6 @@ data = c(rnorm(100,0,1),rnorm(100,5,1))
 # call the cpVisualise function with a penalty range
 cpLabel(data)
 ```
-## Credits
-
-This software uses the following open source packages:
-
-- [changepoint](https://github.com/rkillick/changepoint)
-- [d3.js](https://d3js.org/)
-- [R2D3](https://github.com/rstudio/r2d3)
 
 
 ## Motivation
@@ -112,9 +107,27 @@ penaltyLearning - Provides a mechanism for learning penalty level for given univ
 changepoint - Provides various methods for segmenting individual time-series based on mean and variance. The included methods (mainly PELT) are used to perform unsupervised segmentation, which are extend through visualisation of such solutions to enable better interpretation of changepoint output. Experience with end-users suggests it is a time-consuming process to find an appropriate penalty parameter using these methods, in large part due to lack of coherent visualisation of solution paths. 
 A range of recent work that focuses on interactive visualization of AI systems [1] and can be summarized under the terms 'Explainable' or 'interactive AI'. Examples include interactive playgrounds such as TensorFlow Playground (http://playground.tensorflow.org) and Momentum (https://distill.pub/2017/momentum/), tools for interactive machine learning (https://learningfromusersworkshop.github.io/) as well as more story-like descriptions of studies and analysis cases (http://formafluens.io/client/mix10.html). A great variety of further tools and research is summarized online: http://visxai.io/program.html. More specific, tools such as SmallMultiples [2] and BayesPiles [3] use simple segmentation methods (far less sophisticated than changepoint detection in R) as a proof-of-concept to demonstrate interactive visualization approaches to detect states in temporal networks. In both cases, visualization is used to provide a user with a holistic view of the data (i.e., a time sequence of networks) including more specific information required to aid a user in making decisions about temporal states. Interaction is used complementary to automatic segmentation to allow a user to explore a found segmentation solution (explore states in the network) as well as to quickly refine an automatic solution by splitting and combining states. Finally, time curves [4] are a far more generic way to visualize changes over time, e.g., for multiple timeseries. To the best of our knowledge, no tool and visualization interface exists that allows analysts to explore the solution path of changepoint detection methods in simple time-series. This package hopes to lay the foundations for interfaces and methods that enable changepoint detection across a variety of domains.
 
+## Credits
+
+This software uses the following open source packages:
+
+- [changepoint](https://github.com/rkillick/changepoint)
+- [PenaltyLearning](https://cran.r-project.org/web/packages/penaltyLearning/index.html)
+- [d3.js](https://d3js.org/)
+- [R2D3](https://github.com/rstudio/r2d3)
+
 ## License
 
-GPL
+This software is licenced under the GPLv3 license.
+
+## References
+[1] Li, Tianyi, Gregorio Convertino, Wenbo Wang, Haley Most, Tristan Zajonc, and Yi-Hsun Tsai. "HyperTuner: Visual Analytics for Hyperparameter Tuning by Professionals."
+
+[2] Bach, Benjamin, Nathalie Henry‐Riche, Tim Dwyer, Tara Madhyastha, J‐D. Fekete, and Thomas Grabowski. "Small MultiPiles: Piling time to explore temporal patterns in dynamic networks." In Computer Graphics Forum, vol. 34, no. 3, pp. 31-40. 2015.
+
+[3] Vogogias, Athanasios, Jessie Kennedy, Daniel Archambault, Benjamin Bach, V. Anne Smith, and Hannah Currant. "BayesPiles: Visualisation Support for Bayesian Network Structure Learning." ACM Transactions on Intelligent Systems and Technology (TIST) 10, no. 1 (2018): 5.
+
+[4] Bach, Benjamin, Conglei Shi, Nicolas Heulot, Tara Madhyastha, Tom Grabowski, and Pierre Dragicevic. "Time curves: Folding time to visualize patterns of temporal evolution in data." IEEE transactions on visualization and computer graphics 22, no. 1 (2016): 559-568.
 
 ---
 
