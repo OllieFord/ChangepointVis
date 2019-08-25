@@ -324,18 +324,19 @@ dataVisualisation.append("g")
       .attr("class", "axis axis--x")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis);
-
+/*
 dataVisualisation.append("text")
       .attr("transform", "translate(" + (width/2) + " ," + (height + margin.top + 5) + ")")
       .style("text-anchor", "middle")
       .attr("font-size", "2rem")
       .text("Time")
       .style("color", "#000000");
+*/
 
 dataVisualisation.append("g")
       .attr("class", "axis axis--y")
       .call(yAxis);
-
+/*
 dataVisualisation.append("text")
       .attr("transform", "rotate(-90)")
       .attr("y", 0- margin.left/18)
@@ -345,3 +346,5 @@ dataVisualisation.append("text")
       .attr("font-size", "2rem")
       .text("Value")
       .style("color", "#000000");
+
+*/
