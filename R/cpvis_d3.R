@@ -16,7 +16,7 @@
 #' The main form of interaction with the interface is through selecting each penalty value and then inspecting the resulting solution on the main plot (top left).
 #'
 #' }
-#' @usage cpVisualise(data, penalty_range = c(1,10))
+#' @usage cpVisualise(data, penalty_range = c(1e-5,10))
 #'
 #' @name cpVisualise
 #'
@@ -41,16 +41,15 @@
 #' @return Saves the currently selected solution as a .csv file, for use in cpLabel.
 #'
 #' @author Oliver Ford
-#' @references
-#'
-#' @examples
+#' @examples{
 #' \dontrun{
 #' # Basic example of creating a dummy dataset and running cpVisualise to explore a range of penalty values.
+#'
 #' data = c(rnorm(100,0,1),rnorm(100,5,1))
 #' penalty_range = c(1e-5,10)
 #' cpVisualise(data, penalty_range)
 #' }
-
+#' }
 #' @export cpVisualise
 
 cpVisualise <- function(data, penalty_range = c(1e-5,10)){

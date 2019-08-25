@@ -4,7 +4,7 @@
 \alias{cpVisualise}
 \title{Visual Interface for Unsupervised Changepoint Penalty Exploration}
 \usage{
-cpVisualise(data, penalty_range = c(1,10))
+cpVisualise(data, penalty_range = c(1e-5,10))
 }
 \arguments{
 \item{data}{A univariate dataset. This should be a vector containing the data within which you wish to find a changepoint.}
@@ -41,15 +41,15 @@ Additional information is also presented to help the user interpret the data and
 }
 }
 \examples{
+{
 \dontrun{
 # Basic example of creating a dummy dataset and running cpVisualise to explore a range of penalty values.
+
 data = c(rnorm(100,0,1),rnorm(100,5,1))
 penalty_range = c(1e-5,10)
 cpVisualise(data, penalty_range)
 }
 }
-\references{
-
 }
 \author{
 Oliver Ford

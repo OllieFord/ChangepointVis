@@ -18,14 +18,14 @@
 #' @name cpLabel
 #'
 #' @param data A univariate dataset.
-#' @param unsupervised_changepoint a boolean value, if set to TRUE, the function will try to load changepoints that were created by cpVisulaise and use these to label the data on startup.
-#' @param NoLabel Used to create regions where no changepoints should be.
-#' @param ChangePointRegion Used to create regions where changepoints should be.
-#' @param NumberofSegments used to determine how many models should be evaluated for the given labeled data. Roughly equates to the number of changepoints you belive should be in the data.
-#' @param LearnPenalties run the penalty learning algorithm given the labeled data. Returns predicted changepoints.
-#' @param SaveLabels saves the labels as a .csv file.
+#' @param unsupervised_changepoints a boolean value, if set to TRUE, the function will try to load changepoints that were created by cpVisulaise and use these to label the data on startup.
 #'
 #' @details {This function is used to both label a dataset and to learn a penalty function from the labeled data. Furthermore, this labeled data can be exported for use in other applications.
+#' NoLabel Used to create regions where no changepoints should be.
+#' ChangePointRegion Used to create regions where changepoints should be.
+#' NumberofSegments used to determine how many models should be evaluated for the given labeled data. Roughly equates to the number of changepoints you belive should be in the data.
+#' LearnPenalties run the penalty learning algorithm given the labeled data. Returns predicted changepoints.
+#' SaveLabels saves the labels as a .csv file.
 #'
 #' In addition to the base functionality, this function also allows the data to be pre-labeled using changepoints found using the unsupervised methods in cpVisualise. This can be done by first selecting and saving a solution in cpVisualise (by clicking the "save changepoints" button) and then running cpLabel with \strong{unsupervised_changepoints} set to TRUE. }
 #'
@@ -39,16 +39,18 @@
 #' @importFrom jsonlite toJSON fromJSON
 #' @importFrom Segmentor3IsBack Segmentor
 #' @importFrom utils globalVariables
+#' @importFrom utils read.csv write.csv
 #'
 #'
 #' @return starts a shiny app in a new window
 #'
 #'
-#' @examples
+#' @examples{
 #' \dontrun{
 #' # Basic example of creating a dummy dataset and running cpLabel.
 #' data = c(rnorm(100,0,1),rnorm(100,5,1))
 #' cpLabel(data)
+#' }
 #' }
 #'
 #'
@@ -92,7 +94,7 @@ cpLabel <- function(data, unsupervised_changepoints = FALSE){
 
     server <- function(input, output, session) {
 
-      if (is.not.na(unsupervised_changepoints)) {
+      if (!is.na(unsupervised_changepoints)) {
         print("Converting data and unsupervised labels to json")
         json <- jsonlite::toJSON(c(data_set = list(data),  predictions = list("NULL"), unsup_labels = list(unsupervisedLabels)), pretty = TRUE)
       } else {
