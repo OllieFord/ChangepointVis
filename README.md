@@ -16,6 +16,7 @@
   <a href="#motivation">Motivation</a> •
   <a href="#related-work">Related Work</a> •
   <a href="#credits">Credits</a> •
+  <a href="#future-features">Future Features</a> •
   <a href="#license">License</a> •
   <a href="#references">References</a>
 </p>
@@ -115,6 +116,14 @@ This software uses the following open source packages:
 - [PenaltyLearning](https://cran.r-project.org/web/packages/penaltyLearning/index.html)
 - [d3.js](https://d3js.org/)
 - [R2D3](https://github.com/rstudio/r2d3)
+
+## Future Features 
+- [ ] Merge cpVisualise and cpLabel into one interface.
+- [ ] Add support for multivariate datasets. 
+- [ ] Expand unsupervised changepoint detection functionality to support variance.
+- [ ] Application of saved model/parameters to unseen data.
+- [ ] Responsive interface, for use within Rstudio.
+
 
 ## License
 
