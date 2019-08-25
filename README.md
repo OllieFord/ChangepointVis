@@ -64,7 +64,7 @@ To install most up to date version via github:
 ```R
 install.packages("devtools")
 
-devtools::install_github("Displayr/flipPlots")
+devtools::install_github("OllieFord/ChangepointVis")
 ```
 To install from CRAN:
 ```R 
